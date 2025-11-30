@@ -1,6 +1,6 @@
 """
 DrugFood Guard - Streamlit Application
-약물-음식 상호작용 확인 AI Agent 웹 애플리케이션
+약궁 (YakGung) - 약물-음식 상호작용 확인 AI Agent
 """
 import streamlit as st
 import pandas as pd
@@ -19,7 +19,7 @@ from agent.agent import DrugFoodAgent
 
 # ===== 페이지 설정 =====
 st.set_page_config(
-    page_title="DrugFood Guard 💊🥗",
+    page_title="약궁 (YakGung) 💊🥗",
     page_icon="💊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -149,24 +149,23 @@ def render_sidebar():
         # 약물 등록 폼
         with st.form("drug_form", clear_on_submit=True, enter_to_submit=False):
             drug_name = st.text_input("약물명", placeholder="예: 암로디핀")
-            drug_category = st.selectbox(
-                "약물 분류",
-                ["선택하세요", "혈압약", "당뇨약", "고지혈증약", "항응고제", 
-                 "항생제", "진통제", "위장약", "갑상선약", "기타"]
-            )
+            # drug_category는 AI가 자동 분류
             dosage = st.text_input("복용량 (선택)", placeholder="예: 5mg 1일 1회")
             
             submitted = st.form_submit_button("➕ 약물 등록", use_container_width=True)
             
             if submitted and drug_name:
+                with st.spinner("약물 분류를 확인 중입니다..."):
+                    drug_category = st.session_state.agent.categorize_drug(drug_name)
+                
                 result = st.session_state.agent.user_db.register_drug(
                     user_id=st.session_state.user_id,
                     drug_name=drug_name,
-                    drug_category=drug_category if drug_category != "선택하세요" else None,
+                    drug_category=drug_category,
                     dosage=dosage if dosage else None
                 )
                 if result['success']:
-                    st.success(f"✅ {drug_name} 등록 완료!")
+                    st.success(f"✅ {drug_name} ({drug_category}) 등록 완료!")
                     st.rerun()
                 else:
                     st.error(result['message'])
@@ -345,7 +344,7 @@ def render_chat():
             else:
                 st.markdown(f"""
                 <div class="chat-message assistant-message">
-                    <strong>🤖 DrugFood Guard</strong><br>{msg["content"]}
+                    <strong>🤖 약궁 (YakGung)</strong><br>{msg["content"]}
                 </div>
                 """, unsafe_allow_html=True)
     
@@ -430,7 +429,7 @@ def render_warnings():
 def main():
     """메인 애플리케이션"""
     # 헤더
-    st.markdown('<h1 class="main-header">💊 DrugFood Guard 🥗</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">💊 약궁 (YakGung) 🥗</h1>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">약물-음식 상호작용을 확인하고 안전하게 식사하세요</p>', unsafe_allow_html=True)
     
     # 사이드바

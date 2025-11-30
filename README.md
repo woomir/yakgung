@@ -1,4 +1,4 @@
-# 💊 DrugFood Guard 🥗
+# 💊 약궁 (YakGung) 🥗
 
 **약물-음식 상호작용 확인 AI Agent**
 
@@ -123,7 +123,7 @@ AI: 🔴 위험! 알코올은 메트포르민과 함께 복용 시
 
 ## 👨‍💻 개발팀
 
-MBA 기말 프로젝트 - DrugFood Guard Team
+MBA 기말 프로젝트 - YakGung Team
 
 ---
 

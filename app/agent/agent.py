@@ -334,6 +334,40 @@ class DrugFoodAgent:
         
         return all_warnings
     
+    def categorize_drug(self, drug_name: str) -> str:
+        """약물명을 기반으로 카테고리 자동 분류"""
+        if not self.llm:
+            return "기타"
+            
+        categories = ["혈압약", "당뇨약", "고지혈증약", "항응고제", "항생제", "진통제", "위장약", "갑상선약", "비타민/영양제"]
+        
+        prompt = f"""
+        약물명 '{drug_name}'의 주된 분류는 무엇입니까?
+        다음 목록 중에서 가장 적절한 하나만 선택하여 답변하세요. 목록에 없으면 '기타'라고 답변하세요.
+        
+        목록: {", ".join(categories)}
+        
+        답변 (단어만):
+        """
+        
+        try:
+            response = self.llm.invoke([HumanMessage(content=prompt)])
+            category = response.content.strip()
+            
+            # 응답이 목록에 있는지 확인
+            if category in categories:
+                return category
+            
+            # 목록에 없지만 포함되는 경우 (예: "혈압약입니다" -> "혈압약")
+            for cat in categories:
+                if cat in category:
+                    return cat
+                    
+            return "기타"
+        except Exception as e:
+            print(f"Error categorizing drug: {e}")
+            return "기타"
+
     def clear_history(self):
         """대화 기록 초기화"""
         self.conversation_history = []
