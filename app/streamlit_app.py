@@ -517,9 +517,19 @@ def main():
 
     if st.session_state["authentication_status"] is False:
         st.error('아이디 또는 비밀번호가 일치하지 않습니다.')
-        return
     elif st.session_state["authentication_status"] is None:
         st.warning('아이디와 비밀번호를 입력하세요.')
+    
+    if not st.session_state["authentication_status"]:
+        try:
+            email_of_registered_user, username_of_registered_user, name_of_registered_user = authenticator.register_user(location='main')
+            if email_of_registered_user:
+                st.success('회원가입이 완료되었습니다. 이제 로그인해주세요!')
+                # config 파일 업데이트
+                with open(APP_DIR / '../auth_config.yaml', 'w') as file:
+                    yaml.dump(config, file, default_flow_style=False)
+        except Exception as e:
+            st.error(e)
         return
     
     # 로그인 성공 시 사이드바에 로그아웃 버튼 표시
