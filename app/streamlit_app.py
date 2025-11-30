@@ -527,10 +527,22 @@ def main():
                 new_username = st.text_input("아이디 (Username)")
                 new_password = st.text_input("비밀번호 (Password)", type="password")
                 new_password_repeat = st.text_input("비밀번호 확인 (Repeat Password)", type="password")
+                
+                # 면책 조항 동의
+                with st.expander("⚠️ 이용 약관 및 면책 조항 (필수 확인)", expanded=False):
+                    st.markdown("""
+                    **1. 의학적 조언 아님**: 본 서비스는 정보 제공 목적이며, 의사의 진단을 대체하지 않습니다.
+                    **2. 책임의 제한**: 서비스 이용에 따른 결과에 대해 제공자는 법적 책임을 지지 않습니다.
+                    **3. 응급 상황**: 응급 시 즉시 119에 연락하거나 병원을 방문하세요.
+                    """)
+                agree_disclaimer = st.checkbox("위 약관에 동의합니다.")
+                
                 submit_button = st.form_submit_button("가입하기")
 
                 if submit_button:
-                    if new_username and new_password:
+                    if not agree_disclaimer:
+                        st.error("약관에 동의해야 가입할 수 있습니다.")
+                    elif new_username and new_password:
                         if new_password != new_password_repeat:
                             st.error("비밀번호가 일치하지 않습니다.")
                         elif new_username in config['credentials']['usernames']:
@@ -574,45 +586,7 @@ def main():
         </div>
     """, unsafe_allow_html=True)
     
-    # ===== 면책 조항 (Liability Disclaimer) =====
-    if 'disclaimer_agreed' not in st.session_state:
-        st.session_state.disclaimer_agreed = False
-        
-    if not st.session_state.disclaimer_agreed:
-        with st.expander("⚠️ 서비스 이용 약관 및 면책 조항 (필수)", expanded=True):
-            st.markdown("""
-            ### ⚖️ 법적 고지 및 면책 조항 (Legal Disclaimer)
-            
-            **본 서비스 '약궁(YakGung)'을 이용하기 전에 아래 내용을 반드시 확인하시기 바랍니다.**
-            
-            #### 1. 의학적 조언 아님 (No Medical Advice)
-            본 서비스가 제공하는 모든 정보(텍스트, 데이터, 그래픽 등)는 **일반적인 정보 제공 및 교육 목적**으로만 제공됩니다. 이는 의사, 약사 등 보건의료 전문가의 전문적인 의학적 조언, 진단, 치료를 대체할 수 없습니다.
-            
-            #### 2. 의사-환자 관계 부존재 (No Doctor-Patient Relationship)
-            본 서비스의 사용은 사용자와 서비스 제공자 간의 의사-환자 관계를 형성하지 않습니다. 건강상의 문제나 의문 사항이 있을 경우, 반드시 **자격 있는 의료 전문가와 상담**하십시오.
-            
-            #### 3. 정보의 정확성 및 한계 (Accuracy and Limitations)
-            *   본 서비스는 식약처(MFDS), FDA 등 공신력 있는 기관의 공개 데이터와 AI 기술을 기반으로 정보를 제공하지만, 모든 약물 상호작용과 최신 의학 정보를 포괄한다고 보장할 수 없습니다.
-            *   AI 모델(LLM)의 특성상 부정확하거나 시의적절하지 않은 정보가 생성될 가능성이 있습니다.
-            
-            #### 4. 응급 상황 (Medical Emergencies)
-            본 서비스는 응급 의료 상황을 위해 설계되지 않았습니다. 응급 상황이 발생하거나 의심되는 경우, 즉시 **119**에 연락하거나 가까운 응급실을 방문하십시오.
-            
-            #### 5. 책임의 제한 (Limitation of Liability)
-            사용자는 본 서비스의 정보를 바탕으로 내린 결정에 대해 전적으로 책임을 집니다. 서비스 제공자는 본 서비스 사용으로 인해 발생한 어떠한 직접적, 간접적, 부수적 피해에 대해서도 법적 책임을 지지 않습니다.
-            """)
-            
-            st.markdown("---")
-            agree = st.checkbox("위 '법적 고지 및 면책 조항'을 모두 읽었으며, 이에 동의합니다.")
-            
-            if agree:
-                if st.button("서비스 시작하기", type="primary", use_container_width=True):
-                    st.session_state.disclaimer_agreed = True
-                    st.rerun()
-            
-            # 동의 버튼을 누르기 전까지는 무조건 중단
-            st.warning("서비스를 이용하려면 위 약관에 동의하고 '서비스 시작하기' 버튼을 눌러주세요.")
-            st.stop()
+
     
     # 사이드바
     render_sidebar()
