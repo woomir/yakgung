@@ -501,99 +501,500 @@ def render_landing_page():
     """랜딩 페이지 렌더링"""
     st.markdown("""
         <style>
-        .landing-title {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #1E3A8A;
-            text-align: center;
-            margin-bottom: 0.5rem;
+        :root {
+            --primary: #0A1628;
+            --secondary: #1E3A5F;
+            --accent: #00D4AA;
+            --accent-glow: #00FFD1;
+            --warning: #FFB800;
+            --danger: #FF4757;
+            --safe: #00D4AA;
+            --caution: #FFA502;
+            --text: #E8F4F8;
+            --text-muted: #8BA4B4;
+            --card-bg: rgba(30, 58, 95, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
         }
-        .landing-subtitle {
-            font-size: 1.5rem;
-            color: #4B5563;
+
+        .landing-container {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text);
+            background-color: var(--primary);
+            padding-bottom: 5rem;
+        }
+
+        .landing-container h1, .landing-container h2, .landing-container h3 {
+            color: var(--text);
+        }
+
+        /* Hero Section */
+        .hero {
             text-align: center;
+            padding: 6rem 1rem 4rem;
+            background: radial-gradient(ellipse at 50% 50%, rgba(30, 58, 95, 0.3) 0%, var(--primary) 70%);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            background: var(--glass);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent);
             margin-bottom: 2rem;
         }
-        .feature-card {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            text-align: center;
-            height: 100%;
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
         }
-        .feature-icon {
+
+        .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-value {
             font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-number {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
             margin-bottom: 1rem;
         }
-        .feature-title {
-            font-weight: 700;
+
+        .section-desc {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 212, 170, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Overview Grid */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .overview-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .overview-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .overview-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Problem List */
+        .problem-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .problem-item {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border-left: 4px solid var(--danger);
+        }
+
+        .problem-item-icon {
+            font-size: 1.5rem;
+            min-width: 50px;
+            height: 50px;
+            background: rgba(255, 71, 87, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .problem-item h4 {
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
-            color: #1F2937;
+            font-weight: 600;
+            color: var(--text);
         }
-        .feature-desc {
-            color: #6B7280;
+
+        .problem-item p {
+            color: var(--text-muted);
             font-size: 0.9rem;
-            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Features */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 170, 0.1);
+        }
+
+        .feature-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #007A5E);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .feature-priority {
+            display: inline-block;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        /* Effects */
+        .effects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .effect-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .effect-icon {
+            font-size: 1.5rem;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        /* Streamlit Button Override */
+        .stButton button {
+            width: 100%;
+            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 1rem;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="landing-title">💊 약궁 (YakGung)</div>', unsafe_allow_html=True)
-    st.markdown('<div class="landing-subtitle">약과 음식의 안전한 동행, AI가 지켜드립니다</div>', unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-            <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <div class="feature-title">AI 약사 상담</div>
-                <div class="feature-desc">
-                    최신 AI 기술을 활용하여<br>
-                    약물과 음식의 상호작용을<br>
-                    실시간으로 분석합니다.
+    # Hero Section
+    st.markdown("""
+        <div class="landing-container">
+            <div class="hero">
+                <div class="badge">Health & Wellness RAG Agent AI</div>
+                <h1><span class="highlight">DrugFood</span> Guard</h1>
+                <p class="hero-subtitle">
+                    복용 중인 약물과 음식 간의 상호작용 위험을 실시간으로 분석하여<br>
+                    안전한 복약 생활을 지원하는 <strong>RAG 기반 AI Agent</strong>
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">1,500만+</div>
+                        <div class="stat-label">만성질환 복약자</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">6.5개</div>
+                        <div class="stat-label">65세 이상 평균 복용약</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">30%</div>
+                        <div class="stat-label">약물 부작용 중 상호작용</div>
+                    </div>
                 </div>
             </div>
-        """, unsafe_allow_html=True)
-        
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        st.markdown("""
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <div class="feature-title">간편한 관리</div>
-                <div class="feature-desc">
-                    복용 중인 약물을<br>
-                    한곳에서 등록하고<br>
-                    안전하게 관리하세요.
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-    with col3:
-        st.markdown("""
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <div class="feature-title">안전 지킴이</div>
-                <div class="feature-desc">
-                    주의해야 할 음식 정보를<br>
-                    알기 쉽게 제공하여<br>
-                    건강을 지켜드립니다.
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # 중앙 정렬된 시작 버튼
-    col_spacer1, col_btn, col_spacer2 = st.columns([1, 2, 1])
-    with col_btn:
-        if st.button("약궁 시작하기 (Start Service)", type="primary", use_container_width=True):
+        if st.button("🚀 약궁 시작하기", key="hero_start", type="primary", use_container_width=True):
             st.session_state.show_landing = False
             st.rerun()
+
+    # Overview Section
+    st.markdown("""
+        <div class="landing-container">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-number">01</div>
+                    <h2 class="section-title">Project Overview</h2>
+                    <p class="section-desc">프로젝트의 목적, 핵심 문제, 기대 효과</p>
+                </div>
+                <div class="overview-grid">
+                    <div class="card overview-card">
+                        <div class="overview-icon">🎯</div>
+                        <h3>목적 (Purpose)</h3>
+                        <p>복용 중인 약물과 섭취하려는 음식/음료/건강기능식품 간의 상호작용 위험을 실시간으로 분석하여, 안전한 복약 생활을 지원하는 AI Agent 개발</p>
+                    </div>
+                    <div class="card overview-card">
+                        <div class="overview-icon">⚡</div>
+                        <h3>핵심 문제 (Core Problem)</h3>
+                        <p>다약제 복용자가 증가하는 고령화 사회에서, 약-음식 상호작용에 대한 정보 접근성이 낮아 부작용 위험에 무방비로 노출됨</p>
+                    </div>
+                    <div class="card overview-card">
+                        <div class="overview-icon">✨</div>
+                        <h3>기대 효과 (Expected Effects)</h3>
+                        <p>약물 부작용 사전 예방, 복약 순응도 향상, 불필요한 응급실 방문 감소, 의료비 절감 및 삶의 질 개선</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Problem Section
+    st.markdown("""
+        <div class="landing-container">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-number">02</div>
+                    <h2 class="section-title">Why DrugFood Guard?</h2>
+                    <p class="section-desc">일상 속 숨겨진 위험을 찾아냅니다</p>
+                </div>
+                <div class="problem-list">
+                    <div class="problem-item">
+                        <div class="problem-item-icon">📊</div>
+                        <div>
+                            <h4>다약제 복용의 일상화</h4>
+                            <p>65세 이상 노인 평균 6.5개 약물 복용. 복용 약물이 많을수록 상호작용 위험이 기하급수적으로 증가합니다.</p>
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-item-icon">🔍</div>
+                        <div>
+                            <h4>정보 접근성의 한계</h4>
+                            <p>약사 상담은 시간 부족, 인터넷 검색은 신뢰도 불확실, 기존 앱은 약-약 상호작용만 제공합니다.</p>
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-item-icon">⚠️</div>
+                        <div>
+                            <h4>실제 피해 사례</h4>
+                            <p>와파린+청국장(약효 감소), 스타틴+자몽(농도 급상승), 항생제+유제품(흡수 저하) 등 심각한 부작용 발생</p>
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="problem-item-icon">🤖</div>
+                        <div>
+                            <h4>AI Agent의 필요성</h4>
+                            <p>복합 데이터 분석, 개인 맞춤 판단, 자연어 질의 대응, 실시간 최신 정보 반영이 필요합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Features (MVP) Section
+    st.markdown("""
+        <div class="landing-container">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-number">03</div>
+                    <h2 class="section-title">Key Features</h2>
+                    <p class="section-desc">안전한 복약 생활을 위한 핵심 기능</p>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-number">F1</div>
+                        <h4>복용약 등록</h4>
+                        <p>약 이름을 검색하여 내 약통에 저장하고 관리합니다.</p>
+                        <span class="feature-priority">★★★ 필수</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-number">F2</div>
+                        <h4>음식 상호작용 체크</h4>
+                        <p>"이거 먹어도 돼?" 질문에 위험도와 이유를 설명합니다.</p>
+                        <span class="feature-priority">★★★ 필수</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-number">F3</div>
+                        <h4>안전한 대안 제시</h4>
+                        <p>위험 판정 시 대신 섭취 가능한 안전한 음식을 추천합니다.</p>
+                        <span class="feature-priority">★★☆ 권장</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-number">F4</div>
+                        <h4>주의사항 알림</h4>
+                        <p>약 복용 시 피해야 할 생활 습관과 주의사항을 안내합니다.</p>
+                        <span class="feature-priority">★★☆ 권장</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Effects Section
+    st.markdown("""
+        <div class="landing-container">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-number">04</div>
+                    <h2 class="section-title">Benefits</h2>
+                    <p class="section-desc">DrugFood Guard가 가져올 변화</p>
+                </div>
+                <div class="effects-grid">
+                    <div class="card">
+                        <h3>✨ 기대효과</h3>
+                        <br>
+                        <div class="effect-item">
+                            <div class="effect-icon">🛡️</div>
+                            <div>
+                                <h4>약물 부작용 사전 예방</h4>
+                                <p>상호작용 위험을 미리 인지하여 부작용 발생 감소</p>
+                            </div>
+                        </div>
+                        <div class="effect-item">
+                            <div class="effect-icon">💊</div>
+                            <div>
+                                <h4>복약 순응도 향상</h4>
+                                <p>안전한 식사 가이드로 약 복용 지속률 증가</p>
+                            </div>
+                        </div>
+                        <div class="effect-item">
+                            <div class="effect-icon">🏥</div>
+                            <div>
+                                <h4>의료비 절감</h4>
+                                <p>불필요한 응급실 방문 및 입원 감소</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="border-color: var(--danger);">
+                        <h3 style="color: var(--danger);">⚠️ 한계 및 면책</h3>
+                        <br>
+                        <div class="effect-item">
+                            <div class="effect-icon">⚖️</div>
+                            <div>
+                                <h4>의료 조언 한계</h4>
+                                <p>본 서비스는 정보 제공 목적이며, 의학적 진단을 대체하지 않습니다.</p>
+                            </div>
+                        </div>
+                        <div class="effect-item">
+                            <div class="effect-icon">👤</div>
+                            <div>
+                                <h4>개인차 미반영</h4>
+                                <p>개인의 특이 체질이나 기저질환에 따라 결과가 다를 수 있습니다.</p>
+                            </div>
+                        </div>
+                        <div class="effect-item">
+                            <div class="effect-icon">📊</div>
+                            <div>
+                                <h4>참고용 정보</h4>
+                                <p>최종 판단은 반드시 의사나 약사와 상담해야 합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # CTA Section
+    st.markdown("""
+        <div class="landing-container">
+            <div class="section" style="text-align: center;">
+                <h2 class="section-title">Ready to Start?</h2>
+                <p class="section-desc" style="margin-bottom: 2rem;">
+                    지금 바로 DrugFood Guard와 함께 안전한 복약 생활을 시작하세요.
+                </p>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🚀 서비스 시작하기", key="cta_start", type="primary", use_container_width=True):
+            st.session_state.show_landing = False
+            st.rerun()
+    
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
 
 def main():
     """메인 애플리케이션"""
