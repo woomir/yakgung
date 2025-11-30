@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DrugFood Guard - 약-음식 상호작용 AI Agent 기획서</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0A1628;
+            --secondary: #1E3A5F;
+            --accent: #00D4AA;
+            --accent-glow: #00FFD1;
+            --warning: #FFB800;
+            --danger: #FF4757;
+            --safe: #00D4AA;
+            --caution: #FFA502;
+            --text: #E8F4F8;
+            --text-muted: #8BA4B4;
+            --card-bg: rgba(30, 58, 95, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(30, 58, 95, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 212, 170, 0.03) 0%, transparent 70%),
+                var(--primary);
+        }
+
+        .floating-pills {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .pill {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background: linear-gradient(180deg, var(--accent) 50%, #007A5E 50%);
+            border-radius: 10px;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .pill:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .pill:nth-child(2) { left: 25%; animation-delay: 3s; }
+        .pill:nth-child(3) { left: 40%; animation-delay: 6s; }
+        .pill:nth-child(4) { left: 55%; animation-delay: 9s; }
+        .pill:nth-child(5) { left: 70%; animation-delay: 12s; }
+        .pill:nth-child(6) { left: 85%; animation-delay: 15s; }
+
+        

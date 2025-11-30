@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💊 DrugFood Guard - 프로토타입</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #00d4aa;
+            --danger: #ff4757;
+            --warning: #ffa502;
+            --safe: #00d4aa;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --card: #252542;
+            --input-bg: #1e1e3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: var(--secondary);
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 3px solid #333;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Pages */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--secondary);
+            display: none;
+            flex-direction: column;
+            padding: 50px 20px 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title .icon {
+            font-size: 1.8rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .header-btn {
+            background: var(--card);
+            border: none;
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .header-btn:hover {
+            background: var(--accent);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        /* Drug Cards */
+        .drug-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .drug-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .drug-card:hover {
+            transform: translateX(5px);
+            border-left: 3px solid var(--accent);
+        }
+
+        .drug-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent), #007a5e);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .drug-info {
+            flex: 1;
+        }
+
+        .drug-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .drug-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .drug-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .drug-delete:hover {
+            color: var(--danger);
+        }
+
+        /* Add Drug Button */
+        .add-drug-btn {
+            background: transparent;
+            border: 2px dashed var(--text-muted);
+            border-radius: 16px;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .add-drug-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Question Input */
+        .question-section {
+            margin-top: auto;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .question-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .question-input-wrap {
+            display: flex;
+            gap: 10px;
+        }
+
+        .question-input {
+            flex: 1;
+            background: var(--input-bg);
+            border: 2px solid transparent;
+            border-radius: 14px;
+            padding: 14px 16px;
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .question-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .question-input:focus {
+            border-color: var(--accent);
+        }
+
+        .question-submit {
+            background: var(--accent);
+            border: none;
+            border-radius: 14px;
+            width: 50px;
+            color: var(--primary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .question-submit:hover {
+            transform: scale(1.05);
+        }
+
+        /* Quick Questions */
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .quick-q {
+            background: var(--input-bg);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 8px 14px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-q:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ===== Add Drug Page ===== */
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .search-input-wrap {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-icon {
+            padding: 12px;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            padding: 12px 0;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-results {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-result-item {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .search-result-item:hover {
+            border-color: var(--accent);
+        }
+
+        .search-result-item.selected {
+            border-color: var(--accent);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .result-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .result-detail {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .register-btn {
+            background: var(--accent);
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .register-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .register-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== Response Page ===== */
+        .response-page {
+            padding-top: 50px;
+        }
+
+        .response-card {
+            background: var(--card);
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .response-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .response-header.danger {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.3), rgba(255, 71, 87, 0.1));
+            border-bottom: 3px solid var(--danger);
+        }
+
+        .response-header.safe {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.3), rgba(0, 212, 170, 0.1));
+            border-bottom: 3px solid var(--safe);
+        }
+
+        .response-header.caution {
+            background: linear-gradient(135deg, rgba(255, 165, 2, 0.3), rgba(255, 165, 2, 0.1));
+            border-bottom: 3px solid var(--warning);
+        }
+
+        .response-emoji {
+            font-size: 2.5rem;
+        }
+
+        .response-title {
+            flex: 1;
+        }
+
+        .response-level {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .response-summary {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .response-body {
+            padding: 20px;
+        }
+
+        .response-section {
+            margin-bottom: 18px;
+        }
+
+        .response-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .response-section-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .response-section-content {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .alternative-box {
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 8px;
+        }
+
+        .alternative-items {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .alt-item {
+            background: var(--card);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .source-box {
+            background: var(--input-bg);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .disclaimer {
+            background: rgba(255, 165, 2, 0.1);
+            border-left: 3px solid var(--warning);
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+        }
+
+        .feedback-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feedback-btn {
+            background: var(--card);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px 25px;
+            color: var(--text);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .feedback-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .feedback-btn.active {
+            border-color: var(--accent);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .new-question-btn {
+            background: var(--accent);
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .new-question-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* User Question Display */
+        .user-question {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .user-question-text {
+            flex: 1;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 40px;
+        }
+
+        .loading-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dot:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent);
+            color: var(--primary);
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Instruction Panel */
+        .instruction-panel {
+            position: fixed;
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .instruction-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instruction-list {
+            list-style: none;
+        }
+
+        .instruction-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .instruction-item:last-child {
+            border-bottom: none;
+        }
+
+        .instruction-num {
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .instruction-item.done {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .instruction-item.done .instruction-num {
+            background: var(--text-muted);
+        }
+
+        .instruction-item.current {
+            color: var(--accent);
+        }
+
+        .test-scenarios {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .test-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .test-btn {
+            display: block;
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-bottom: 8px;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .test-btn:hover {
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 900px) {
+            .instruction-panel {
+                display: none;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Instruction Panel -->
+    <div class="instruction-panel">
+        <div class="instruction-title">
+            📱 시연 가이드
+        </div>
+        <ul class="instruction-list">
+            <li class="instruction-item current" id="step1">
+                <span class="instruction-num">1</span>
+                <span>"+ 약물 추가" 버튼 클릭</span>
+            </li>
+            <li class="instruction-item" id="step2">
+                <span class="instruction-num">2</span>
+                <span>"암로디핀" 검색 후 등록</span>
+            </li>
+            <li class="instruction-item" id="step3">
+                <span class="instruction-num">3</span>
+                <span>질문 입력 또는 빠른 질문 클릭</span>
+            </li>
+            <li class="instruction-item" id="step4">
+                <span class="instruction-num">4</span>
+                <span>AI 응답 확인</span>
+            </li>
+        </ul>
+        <div class="test-scenarios">
+            <div class="test-title">🧪 테스트 질문</div>
+            <button class="test-btn" onclick="simulateQuestion('자몽주스 마셔도 돼요?')">🍊 자몽주스 → 위험</button>
+            <button class="test-btn" onclick="simulateQuestion('사과 먹어도 돼요?')">🍎 사과 → 안전</button>
+            <button class="test-btn" onclick="simulateQuestion('맥주 마셔도 돼요?')">🍺 맥주 → 주의</button>
+        </div>
+    </div>
+
+    <!-- Phone Frame -->
+    <div class="phone-frame">
+        <div class="notch"></div>
+        <div class="screen">
+
+            <!-- Page 1: Home -->
+            <div class="page active" id="page-home">
+                <div class="header">
+                    <div class="header-title">
+                        <span class="icon">💊</span>
+                        <h1>DrugFood Guard</h1>
+                    </div>
+                    <button class="header-btn">⚙️</button>
+                </div>
+
+                <div class="section-title">💊 내 복용 약물</div>
+                <div class="drug-list" id="drug-list">
+                    <!-- 동적으로 추가됨 -->
+                </div>
+
+                <button class="add-drug-btn" onclick="showPage('page-add-drug')">
+                    <span>➕</span> 약물 추가
+                </button>
+
+                <div class="question-section">
+                    <div class="question-label">🍽️ 오늘 뭘 드시려고 하세요?</div>
+                    <div class="question-input-wrap">
+                        <input type="text" class="question-input" id="question-input" placeholder="예: 자몽주스 마셔도 돼요?">
+                        <button class="question-submit" onclick="submitQuestion()">→</button>
+                    </div>
+                    <div class="quick-questions">
+                        <span class="quick-q" onclick="setQuestion('자몽주스 마셔도 돼요?')">🍊 자몽주스</span>
+                        <span class="quick-q" onclick="setQuestion('우유 마셔도 돼요?')">🥛 우유</span>
+                        <span class="quick-q" onclick="setQuestion('맥주 마셔도 돼요?')">🍺 맥주</span>
+                        <span class="quick-q" onclick="setQuestion('사과 먹어도 돼요?')">🍎 사과</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 2: Add Drug -->
+            <div class="page" id="page-add-drug">
+                <div class="header">
+                    <button class="back-btn" onclick="showPage('page-home')">←</button>
+                    <div class="header-title">
+                        <h1>약물 등록</h1>
+                    </div>
+                    <div style="width:40px"></div>
+                </div>
+
+                <div class="search-input-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="drug-search" placeholder="약 이름을 검색하세요" oninput="searchDrug(this.value)">
+                </div>
+
+                <div class="search-results" id="search-results">
+                    <div class="empty-state">
+                        <div class="empty-icon">💊</div>
+                        <div class="empty-text">약 이름을 검색해보세요<br>예: 암로디핀, 메트포르민</div>
+                    </div>
+                </div>
+
+                <button class="register-btn" id="register-btn" disabled onclick="registerDrug()">등록하기</button>
+            </div>
+
+            <!-- Page 3: Loading -->
+            <div class="page" id="page-loading">
+                <div class="header">
+                    <button class="back-btn" onclick="showPage('page-home')">←</button>
+                    <div class="header-title">
+                        <h1>분석 중...</h1>
+                    </div>
+                    <div style="width:40px"></div>
+                </div>
+
+                <div class="user-question">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-question-text" id="loading-question"></div>
+                </div>
+
+                <div class="loading">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+                <div style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">
+                    복용 약물과 상호작용을 분석하고 있어요...
+                </div>
+            </div>
+
+            <!-- Page 4: Response - Danger -->
+            <div class="page response-page" id="page-response-danger">
+                <div class="header">
+                    <button class="back-btn" onclick="showPage('page-home')">←</button>
+                    <div class="header-title">
+                        <h1>분석 결과</h1>
+                    </div>
+                    <div style="width:40px"></div>
+                </div>
+
+                <div class="user-question">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-question-text" id="danger-question">자몽주스 마셔도 돼요?</div>
+                </div>
+
+                <div class="response-card">
+                    <div class="response-header danger">
+                        <div class="response-emoji">🔴</div>
+                        <div class="response-title">
+                            <div class="response-level">위험</div>
+                            <div class="response-summary">함께 드시면 안 됩니다</div>
+                        </div>
+                    </div>
+                    <div class="response-body">
+                        <div class="response-section">
+                            <div class="response-section-title">📋 판정 이유</div>
+                            <div class="response-section-content">
+                                고객님이 복용 중인 <strong>암로디핀(혈압약)</strong>과 <strong>자몽주스</strong>는 함께 섭취 시 위험합니다.<br><br>
+                                자몽의 <strong>푸라노쿠마린</strong> 성분이 약물 대사 효소(CYP3A4)를 억제하여 혈중 약물 농도가 <strong>2~3배까지 상승</strong>할 수 있습니다.
+                            </div>
+                        </div>
+                        <div class="response-section">
+                            <div class="response-section-title">✅ 안전한 대안</div>
+                            <div class="alternative-box">
+                                다음 과일은 안전하게 드실 수 있습니다
+                                <div class="alternative-items">
+                                    <span class="alt-item">🍎 사과</span>
+                                    <span class="alt-item">🍊 오렌지</span>
+                                    <span class="alt-item">🍐 배</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="response-section">
+                            <div class="response-section-title">📚 출처</div>
+                            <div class="source-box">
+                                식약처 의약품안전사용서비스(DUR)<br>
+                                약학정보원 복약지도
+                            </div>
+                        </div>
+                        <div class="disclaimer">
+                            ⚠️ 본 정보는 참고용이며, 정확한 판단은 의사 또는 약사와 상담하시기 바랍니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <button class="feedback-btn" onclick="this.classList.toggle('active')">👍 도움됨</button>
+                    <button class="feedback-btn" onclick="this.classList.toggle('active')">👎 아쉬움</button>
+                </div>
+                <button class="new-question-btn" onclick="showPage('page-home')">새 질문하기</button>
+            </div>
+
+            <!-- Page 5: Response - Safe -->
+            <div class="page response-page" id="page-response-safe">
+                <div class="header">
+                    <button class="back-btn" onclick="showPage('page-home')">←</button>
+                    <div class="header-title">
+                        <h1>분석 결과</h1>
+                    </div>
+                    <div style="width:40px"></div>
+                </div>
+
+                <div class="user-question">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-question-text" id="safe-question">사과 먹어도 돼요?</div>
+                </div>
+
+                <div class="response-card">
+                    <div class="response-header safe">
+                        <div class="response-emoji">🟢</div>
+                        <div class="response-title">
+                            <div class="response-level">안전</div>
+                            <div class="response-summary">드셔도 괜찮습니다</div>
+                        </div>
+                    </div>
+                    <div class="response-body">
+                        <div class="response-section">
+                            <div class="response-section-title">✅ 판정 결과</div>
+                            <div class="response-section-content">
+                                고객님이 복용 중인 <strong>암로디핀(혈압약)</strong>과 <strong>사과</strong>는 알려진 상호작용이 없습니다.<br><br>
+                                안심하고 드세요! 🍎
+                            </div>
+                        </div>
+                        <div class="response-section">
+                            <div class="response-section-title">💡 참고사항</div>
+                            <div class="alternative-box">
+                                단, <strong>자몽과 자몽주스</strong>는 피해주세요.<br>
+                                오렌지, 귤, 사과, 배는 모두 안전합니다.
+                            </div>
+                        </div>
+                        <div class="response-section">
+                            <div class="response-section-title">📚 출처</div>
+                            <div class="source-box">
+                                식약처 의약품안전사용서비스(DUR)
+                            </div>
+                        </div>
+                        <div class="disclaimer">
+                            ⚠️ 본 정보는 참고용이며, 정확한 판단은 의사 또는 약사와 상담하시기 바랍니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <button class="feedback-btn" onclick="this.classList.toggle('active')">👍 도움됨</button>
+                    <button class="feedback-btn" onclick="this.classList.toggle('active')">👎 아쉬움</button>
+                </div>
+                <button class="new-question-btn" onclick="showPage('page-home')">새 질문하기</button>
+            </div>
+
+            <!-- Page 6: Response - Caution -->
+            <div class="page response-page" id="page-response-caution">
+                <div class="header">
+                    <button class="back-btn" onclick="showPage('page-home')">←</button>
+                    <div class="header-title">
+                        <h1>분석 결과</h1>
+                    </div>
+                    <div style="width:40px"></div>
+                </div>
+
+                <div class="user-question">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-question-text" id="caution-question">맥주 마셔도 돼요?</div>
+                </div>
+
+                <div class="response-card">
+                    <div class="response-header caution">
+                        <div class="response-emoji">🟡</div>
+                        <div class="response-title">
+                            <div class="response-level">주의</div>
+                            <div class="response-summary">섭취 가능하나 주의하세요</div>
+                        </div>
+                    </div>
+                    <div class="response-body">
+                        <div class="response-section">
+                            <div class="response-section-title">⚠️ 주의사항</div>
+                            <div class="response-section-content">
+                                <strong>암로디핀(혈압약)</strong>과 <strong>알코올</strong>을 함께 섭취하면 혈압 강하 효과가 증가하여 <strong>어지러움, 두통</strong>이 발생할 수 있습니다.
+                            </div>
+                        </div>
+                        <div class="response-section">
+                            <div class="response-section-title">📋 권장사항</div>
+                            <div class="alternative-box">
+                                • 소량(맥주 1잔 이하)은 대부분 괜찮습니다<br>
+                                • 처음에는 천천히 마시며 반응을 확인하세요<br>
+                                • 어지러움 느끼면 즉시 중단하세요
+                            </div>
+                        </div>
+                        <div class="response-section">
+                            <div class="response-section-title">⏰ 시간 간격</div>
+                            <div class="response-section-content">
+                                약 복용 후 <strong>최소 2시간 이후</strong> 음주를 권장합니다.
+                            </div>
+                        </div>
+                        <div class="response-section">
+                            <div class="response-section-title">📚 출처</div>
+                            <div class="source-box">
+                                약학정보원 복약지도
+                            </div>
+                        </div>
+                        <div class="disclaimer">
+                            ⚠️ 본 정보는 참고용이며, 정확한 판단은 의사 또는 약사와 상담하시기 바랍니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <button class="feedback-btn" onclick="this.classList.toggle('active')">👍 도움됨</button>
+                    <button class="feedback-btn" onclick="this.classList.toggle('active')">👎 아쉬움</button>
+                </div>
+                <button class="new-question-btn" onclick="showPage('page-home')">새 질문하기</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // State
+        let registeredDrugs = [];
+        let selectedDrug = null;
+        let currentStep = 1;
+
+        // Drug Database (시뮬레이션용)
+        const drugDatabase = [
+            { name: '암로디핀 5mg', ingredient: '암로디핀베실산염', category: '혈압약 (칼슘채널차단제)', icon: '💊' },
+            { name: '암로디핀 10mg', ingredient: '암로디핀베실산염', category: '혈압약 (칼슘채널차단제)', icon: '💊' },
+            { name: '메트포르민 500mg', ingredient: '메트포르민염산염', category: '당뇨약 (비구아나이드계)', icon: '💊' },
+            { name: '메트포르민 1000mg', ingredient: '메트포르민염산염', category: '당뇨약 (비구아나이드계)', icon: '💊' },
+            { name: '로수바스타틴 10mg', ingredient: '로수바스타틴칼슘', category: '고지혈증약 (스타틴계)', icon: '💊' },
+            { name: '아스피린 100mg', ingredient: '아스피린', category: '항혈소판제', icon: '💊' },
+            { name: '와파린 2mg', ingredient: '와파린나트륨', category: '항응고제', icon: '💊' },
+            { name: '오메프라졸 20mg', ingredient: '오메프라졸', category: '위산억제제 (PPI)', icon: '💊' },
+        ];
+
+        // Response mapping (시뮬레이션용)
+        const responseMap = {
+            '자몽': 'danger',
+            '자몽주스': 'danger',
+            '그레이프프루트': 'danger',
+            '사과': 'safe',
+            '오렌지': 'safe',
+            '배': 'safe',
+            '바나나': 'safe',
+            '우유': 'safe',
+            '맥주': 'caution',
+            '술': 'caution',
+            '소주': 'caution',
+            '와인': 'caution'
+        };
+
+        // Show page
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+
+            // Update steps
+            if (pageId === 'page-add-drug') {
+                updateStep(1);
+            } else if (pageId === 'page-home' && registeredDrugs.length > 0) {
+                updateStep(3);
+            }
+        }
+
+        // Update instruction step
+        function updateStep(step) {
+            currentStep = step;
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById('step' + i);
+                el.classList.remove('done', 'current');
+                if (i < step) el.classList.add('done');
+                else if (i === step) el.classList.add('current');
+            }
+        }
+
+        // Render drug list
+        function renderDrugList() {
+            const list = document.getElementById('drug-list');
+            if (registeredDrugs.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💊</div>
+                        <div class="empty-text">등록된 약물이 없습니다<br>약물을 추가해주세요</div>
+                    </div>
+                `;
+            } else {
+                list.innerHTML = registeredDrugs.map((drug, idx) => `
+                    <div class="drug-card">
+                        <div class="drug-icon">${drug.icon}</div>
+                        <div class="drug-info">
+                            <div class="drug-name">${drug.name}</div>
+                            <div class="drug-desc">${drug.category}</div>
+                        </div>
+                        <button class="drug-delete" onclick="deleteDrug(${idx})">✕</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Search drug
+        function searchDrug(query) {
+            const results = document.getElementById('search-results');
+            const registerBtn = document.getElementById('register-btn');
+
+            if (query.length < 1) {
+                results.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💊</div>
+                        <div class="empty-text">약 이름을 검색해보세요<br>예: 암로디핀, 메트포르민</div>
+                    </div>
+                `;
+                registerBtn.disabled = true;
+                selectedDrug = null;
+                return;
+            }
+
+            const filtered = drugDatabase.filter(d => 
+                d.name.includes(query) || d.ingredient.includes(query)
+            );
+
+            if (filtered.length === 0) {
+                results.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-text">검색 결과가 없습니다</div>
+                    </div>
+                `;
+                registerBtn.disabled = true;
+                selectedDrug = null;
+            } else {
+                results.innerHTML = filtered.map((drug, idx) => `
+                    <div class="search-result-item" onclick="selectDrug(${idx}, '${drug.name}')">
+                        <div class="result-name">${drug.name}</div>
+                        <div class="result-detail">${drug.ingredient} · ${drug.category}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Select drug
+        function selectDrug(idx, name) {
+            document.querySelectorAll('.search-result-item').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            selectedDrug = drugDatabase.find(d => d.name === name);
+            document.getElementById('register-btn').disabled = false;
+        }
+
+        // Register drug
+        function registerDrug() {
+            if (!selectedDrug) return;
+
+            // 중복 체크
+            if (registeredDrugs.find(d => d.name === selectedDrug.name)) {
+                showToast('이미 등록된 약물입니다');
+                return;
+            }
+
+            registeredDrugs.push(selectedDrug);
+            renderDrugList();
+            showToast(`${selectedDrug.name} 등록 완료!`);
+            
+            // Reset
+            document.getElementById('drug-search').value = '';
+            document.getElementById('search-results').innerHTML = '';
+            document.getElementById('register-btn').disabled = true;
+            selectedDrug = null;
+
+            updateStep(3);
+            showPage('page-home');
+        }
+
+        // Delete drug
+        function deleteDrug(idx) {
+            registeredDrugs.splice(idx, 1);
+            renderDrugList();
+            showToast('약물이 삭제되었습니다');
+        }
+
+        // Set question
+        function setQuestion(q) {
+            document.getElementById('question-input').value = q;
+        }
+
+        // Submit question
+        function submitQuestion() {
+            const input = document.getElementById('question-input');
+            const question = input.value.trim();
+
+            if (!question) {
+                showToast('질문을 입력해주세요');
+                return;
+            }
+
+            if (registeredDrugs.length === 0) {
+                showToast('먼저 복용 중인 약물을 등록해주세요');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading-question').textContent = question;
+            showPage('page-loading');
+            updateStep(4);
+
+            // Determine response type
+            let responseType = 'safe';
+            for (const [keyword, type] of Object.entries(responseMap)) {
+                if (question.includes(keyword)) {
+                    responseType = type;
+                    break;
+                }
+            }
+
+            // Simulate API delay
+            setTimeout(() => {
+                if (responseType === 'danger') {
+                    document.getElementById('danger-question').textContent = question;
+                    showPage('page-response-danger');
+                } else if (responseType === 'caution') {
+                    document.getElementById('caution-question').textContent = question;
+                    showPage('page-response-caution');
+                } else {
+                    document.getElementById('safe-question').textContent = question;
+                    showPage('page-response-safe');
+                }
+                input.value = '';
+            }, 1500);
+        }
+
+        // Simulate question (from instruction panel)
+        function simulateQuestion(q) {
+            if (registeredDrugs.length === 0) {
+                showToast('먼저 약물을 등록해주세요!');
+                showPage('page-home');
+                return;
+            }
+            document.getElementById('question-input').value = q;
+            submitQuestion();
+        }
+
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // Enter key submit
+        document.getElementById('question-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitQuestion();
+        });
+
+        // Init
+        renderDrugList();
+    </script>
+
+</body>
+</html>
