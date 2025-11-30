@@ -1079,7 +1079,7 @@ def main():
     # 로그인 성공 시 사이드바에 로그아웃 버튼 표시
     with st.sidebar:
         st.write(f"환영합니다, **{st.session_state['name']}**님! 👋")
-        def logout_callback():
+        def logout_callback(*args, **kwargs):
             st.session_state.show_landing = True
 
         authenticator.logout(location='sidebar', callback=logout_callback) # 로그아웃 버튼 위치 지정 및 콜백
