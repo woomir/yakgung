@@ -7,6 +7,9 @@ import pandas as pd
 from pathlib import Path
 import sys
 import uuid
+import yaml
+from yaml.loader import SafeLoader
+import streamlit_authenticator as stauth
 
 # 경로 설정
 APP_DIR = Path(__file__).parent
@@ -495,6 +498,39 @@ def render_warnings():
 # ===== 메인 =====
 def main():
     """메인 애플리케이션"""
+    # ===== 인증 (Authentication) =====
+    try:
+        with open(APP_DIR / '../auth_config.yaml') as file:
+            config = yaml.load(file, Loader=SafeLoader)
+    except FileNotFoundError:
+        st.error("인증 설정 파일(auth_config.yaml)을 찾을 수 없습니다.")
+        return
+
+    authenticator = stauth.Authenticate(
+        config['credentials'],
+        config['cookie']['name'],
+        config['cookie']['key'],
+        config['cookie']['expiry_days'],
+        config['preauthorized']
+    )
+
+    name, authentication_status, username = authenticator.login('로그인', 'main')
+
+    if authentication_status is False:
+        st.error('아이디 또는 비밀번호가 일치하지 않습니다.')
+        return
+    elif authentication_status is None:
+        st.warning('아이디와 비밀번호를 입력하세요.')
+        return
+    
+    # 로그인 성공 시 사이드바에 로그아웃 버튼 표시
+    with st.sidebar:
+        st.write(f"환영합니다, **{name}**님! 👋")
+        authenticator.logout('로그아웃', 'main')
+        st.divider()
+    
+    # 사용자 ID를 로그인한 사용자로 설정 (데이터 개인화)
+    st.session_state.user_id = username
     # 헤더
     # 헤더 (배너 스타일)
     st.markdown("""

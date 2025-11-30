@@ -3,6 +3,7 @@
 
 # Web Framework
 streamlit==1.51.0
+streamlit-authenticator>=0.3.0
 
 # LLM & RAG
 langchain>=0.1.0
