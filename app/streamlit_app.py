@@ -510,8 +510,7 @@ def main():
         config['credentials'],
         config['cookie']['name'],
         config['cookie']['key'],
-        config['cookie']['expiry_days'],
-        config['preauthorized']
+        config['cookie']['expiry_days']
     )
 
     name, authentication_status, username = authenticator.login('로그인', 'main')
