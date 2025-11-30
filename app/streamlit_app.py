@@ -116,11 +116,22 @@ def init_session_state():
     if 'provider' not in st.session_state:
         st.session_state.provider = "gemini"
 
-    if 'api_key' not in st.session_state:
-        st.session_state.api_key = GOOGLE_API_KEY
+    # API 키 업데이트 (Secrets 변경 사항 반영)
+    st.session_state.api_key = GOOGLE_API_KEY
 
-    # Agent 초기화 또는 업데이트 (새로운 메서드가 없는 경우 재초기화)
-    if 'agent' not in st.session_state or not hasattr(st.session_state.agent, 'categorize_drug'):
+    # Agent 초기화 조건:
+    # 1. Agent가 없거나
+    # 2. API 키가 변경되었거나 (Agent가 가진 키와 현재 키 불일치)
+    # 3. categorize_drug 메서드가 없는 경우 (구버전 객체)
+    should_reinit = False
+    if 'agent' not in st.session_state:
+        should_reinit = True
+    elif getattr(st.session_state.agent, 'api_key', None) != st.session_state.api_key:
+        should_reinit = True
+    elif not hasattr(st.session_state.agent, 'categorize_drug'):
+        should_reinit = True
+
+    if should_reinit:
         st.session_state.agent = DrugFoodAgent(
             provider=st.session_state.provider,
             api_key=st.session_state.api_key
@@ -167,7 +178,8 @@ def render_sidebar():
                 )
                 if result['success']:
                     st.success(f"✅ {drug_name} ({drug_category}) 등록 완료!")
-                    st.rerun()
+                    # st.rerun() 제거: 메시지가 유지되도록 함. 
+                    # 목록은 아래에서 렌더링되므로 자동으로 업데이트됨.
                 else:
                     st.error(result['message'])
         
