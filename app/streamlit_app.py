@@ -497,8 +497,114 @@ def render_warnings():
 
 
 # ===== 메인 =====
+def render_landing_page():
+    """랜딩 페이지 렌더링"""
+    st.markdown("""
+        <style>
+        .landing-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #1E3A8A;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .landing-subtitle {
+            font-size: 1.5rem;
+            color: #4B5563;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .feature-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            height: 100%;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .feature-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #1F2937;
+        }
+        .feature-desc {
+            color: #6B7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="landing-title">💊 약궁 (YakGung)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="landing-subtitle">약과 음식의 안전한 동행, AI가 지켜드립니다</div>', unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">AI 약사 상담</div>
+                <div class="feature-desc">
+                    최신 AI 기술을 활용하여<br>
+                    약물과 음식의 상호작용을<br>
+                    실시간으로 분석합니다.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    with col2:
+        st.markdown("""
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">간편한 관리</div>
+                <div class="feature-desc">
+                    복용 중인 약물을<br>
+                    한곳에서 등록하고<br>
+                    안전하게 관리하세요.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    with col3:
+        st.markdown("""
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">안전 지킴이</div>
+                <div class="feature-desc">
+                    주의해야 할 음식 정보를<br>
+                    알기 쉽게 제공하여<br>
+                    건강을 지켜드립니다.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # 중앙 정렬된 시작 버튼
+    col_spacer1, col_btn, col_spacer2 = st.columns([1, 2, 1])
+    with col_btn:
+        if st.button("약궁 시작하기 (Start Service)", type="primary", use_container_width=True):
+            st.session_state.show_landing = False
+            st.rerun()
+
 def main():
     """메인 애플리케이션"""
+    # 랜딩 페이지 표시 여부 확인
+    if 'show_landing' not in st.session_state:
+        st.session_state.show_landing = True
+    
+    if st.session_state.show_landing:
+        render_landing_page()
+        return
+
     # ===== 인증 (Authentication) =====
     try:
         with open(APP_DIR / '../auth_config.yaml') as file:
