@@ -526,9 +526,10 @@ def main():
                 if st.button("서비스 시작하기", type="primary", use_container_width=True):
                     st.session_state.disclaimer_agreed = True
                     st.rerun()
-            else:
-                st.warning("서비스를 이용하려면 위 약관에 동의해야 합니다.")
-                st.stop() # 동의하지 않으면 여기서 중단
+            
+            # 동의 버튼을 누르기 전까지는 무조건 중단
+            st.warning("서비스를 이용하려면 위 약관에 동의하고 '서비스 시작하기' 버튼을 눌러주세요.")
+            st.stop()
     
     # 사이드바
     render_sidebar()
