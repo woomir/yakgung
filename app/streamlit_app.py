@@ -119,7 +119,8 @@ def init_session_state():
     if 'api_key' not in st.session_state:
         st.session_state.api_key = GOOGLE_API_KEY
 
-    if 'agent' not in st.session_state:
+    # Agent 초기화 또는 업데이트 (새로운 메서드가 없는 경우 재초기화)
+    if 'agent' not in st.session_state or not hasattr(st.session_state.agent, 'categorize_drug'):
         st.session_state.agent = DrugFoodAgent(
             provider=st.session_state.provider,
             api_key=st.session_state.api_key
