@@ -2,7 +2,7 @@
 
 > **문서 목적**: AI 시스템이 프로젝트 맥락을 이해하고 개발을 지원할 수 있도록 구조화된 기획 정보 제공
 > **버전**: 1.1 (Updated)
-> **최종 수정**: 2024-11-30
+> **최종 수정**: 2025-11-30
 
 ---
 
@@ -14,7 +14,7 @@ project_type: RAG-based AI Agent
 domain: Healthcare / Medication Safety
 target_users: 다약제 복용 고령자, 보호자, 일반 사용자
 language: Korean (primary), English (secondary)
-development_period: 6 weeks
+
 team_size: 4 members
 current_status: MVP Implemented
 ```
