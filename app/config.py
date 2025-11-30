@@ -13,16 +13,23 @@ load_dotenv()
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 
+# Streamlit Secrets 로드 시도
+try:
+    import streamlit as st
+    secrets = st.secrets
+except (ImportError, FileNotFoundError):
+    secrets = {}
+
 # LLM 설정 (OpenAI or Google Gemini)
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini")  # "openai" or "gemini"
+LLM_PROVIDER = secrets.get("LLM_PROVIDER", os.getenv("LLM_PROVIDER", "gemini"))
 
 # OpenAI 설정
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+OPENAI_API_KEY = secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY", ""))
+OPENAI_MODEL = secrets.get("OPENAI_MODEL", os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
 
 # Google Gemini 설정
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-exp")
+GOOGLE_API_KEY = secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY", ""))
+GEMINI_MODEL = secrets.get("GEMINI_MODEL", os.getenv("GEMINI_MODEL", "gemini-2.0-flash-exp"))
 
 # ChromaDB 설정
 CHROMA_PERSIST_DIR = str(DATA_DIR / "chroma_db")
