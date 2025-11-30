@@ -157,17 +157,6 @@ def render_sidebar():
         
         # 내 약물 관리
         st.markdown("## 💊 내 약물 관리")
-
-        # 디버그: 모델 목록 확인 (임시)
-        if st.checkbox("🛠️ 모델 목록 확인 (디버그)"):
-            try:
-                import google.generativeai as genai
-                genai.configure(api_key=st.session_state.api_key)
-                models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-                st.json(models)
-            except Exception as e:
-                st.error(f"모델 목록 조회 실패: {e}")
-
         
         # 약물 등록 폼
         with st.form("drug_form", clear_on_submit=True, enter_to_submit=False):
