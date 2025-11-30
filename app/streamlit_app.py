@@ -273,6 +273,12 @@ def render_quick_check():
         # 결과 표시
         st.markdown("---")
         
+        # 추출된 음식명 표시
+        extracted_food = result.get('extracted_food', food_to_check)
+        if extracted_food != food_to_check:
+             st.info(f"💡 '{food_to_check}'에서 '{extracted_food}'(으)로 확인했습니다.")
+        
+        
         if result['danger_count'] > 0:
             st.markdown(f"""
             <div class="risk-danger">

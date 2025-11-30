@@ -106,6 +106,41 @@ class DrugFoodAgent:
                 return food
         
         return None
+
+    def extract_food_name(self, query: str) -> str:
+        """LLM을 사용하여 쿼리에서 음식명 추출"""
+        # 1. 간단한 규칙 기반 시도 (속도 최적화)
+        simple_extract = self._extract_food_from_query(query)
+        if simple_extract:
+            return simple_extract
+            
+        # 2. LLM 사용
+        if not self.llm:
+            return query  # LLM 없으면 원본 반환
+            
+        prompt = f"""
+        다음 문장에서 '음식' 또는 '음료'의 이름만 정확하게 추출하세요.
+        문장에 음식이 없다면 'None'이라고 답하세요.
+        조사나 수식어는 제외하고 핵심 단어만 반환하세요.
+        
+        문장: "{query}"
+        
+        추출된 음식명:
+        """
+        
+        try:
+            response = self.llm.invoke([HumanMessage(content=prompt)])
+            extracted = response.content.strip()
+            
+            if extracted == 'None' or 'None' in extracted:
+                return query # 추출 실패 시 원본 사용
+                
+            # 따옴표 제거
+            extracted = extracted.replace("'", "").replace('"', "")
+            return extracted
+        except Exception as e:
+            print(f"Error extracting food name: {e}")
+            return query
     
     def _format_interaction_result(self, result: Dict) -> str:
         """검색 결과를 읽기 쉬운 형식으로 포맷"""
@@ -252,9 +287,12 @@ class DrugFoodAgent:
     def check_interaction(
         self, 
         user_id: str, 
-        food_name: str
+        query: str
     ) -> Dict:
         """특정 음식에 대한 상호작용 확인 (빠른 조회)"""
+        
+        # 음식명 추출
+        food_name = self.extract_food_name(query)
         
         user_drugs = self.user_db.get_user_drug_names(user_id)
         
@@ -310,7 +348,9 @@ class DrugFoodAgent:
             "caution_count": caution_count,
             "safe_count": safe_count,
             "message": message,
-            "interactions": interactions
+            "message": message,
+            "interactions": interactions,
+            "extracted_food": food_name # 추출된 음식명 반환
         }
     
     def get_all_warnings(self, user_id: str) -> List[Dict]:
