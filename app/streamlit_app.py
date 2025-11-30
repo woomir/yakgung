@@ -157,6 +157,105 @@ def init_session_state():
 init_session_state()
 
 
+# ===== 데이터 로드 함수 =====
+@st.cache_data
+def load_drug_db():
+    """약물 데이터베이스 로드"""
+    try:
+        df = pd.read_csv(APP_DIR / "../data/drugs.csv")
+        return df
+    except Exception as e:
+        st.error(f"약물 DB 로드 실패: {e}")
+        return pd.DataFrame()
+
+@st.cache_data
+def load_interaction_db():
+    """상호작용 데이터베이스 로드"""
+    try:
+        df = pd.read_csv(APP_DIR / "../data/drug_food_interactions.csv")
+        return df
+    except Exception as e:
+        st.error(f"상호작용 DB 로드 실패: {e}")
+        return pd.DataFrame()
+
+def render_drug_db():
+    """약물 DB 뷰어 렌더링"""
+    st.header("💊 약물 데이터베이스 (Drug DB)")
+    st.caption("약궁이 보유한 의약품 및 상호작용 데이터를 투명하게 공개합니다.")
+
+    tab1, tab2 = st.tabs(["📋 의약품 목록", "⚠️ 상호작용 규칙"])
+
+    with tab1:
+        st.subheader("등록된 의약품 목록")
+        df_drugs = load_drug_db()
+        if not df_drugs.empty:
+            # 검색 기능
+            search_term = st.text_input("🔍 의약품 검색", placeholder="약물명 또는 성분명 입력")
+            if search_term:
+                df_drugs = df_drugs[
+                    df_drugs['drug_name'].str.contains(search_term, case=False) | 
+                    df_drugs['drug_ingredient'].str.contains(search_term, case=False)
+                ]
+            
+            st.dataframe(
+                df_drugs, 
+                use_container_width=True,
+                column_config={
+                    "drug_id": "ID",
+                    "drug_name": "약물명",
+                    "drug_ingredient": "성분명",
+                    "drug_category": "분류",
+                    "common_conditions": "적응증",
+                    "dosage_form": "제형",
+                    "typical_dosage": "용법용량",
+                    "precautions": "주의사항"
+                }
+            )
+            st.caption(f"총 {len(df_drugs)}개의 의약품이 등록되어 있습니다.")
+        else:
+            st.info("등록된 의약품 데이터가 없습니다.")
+
+    with tab2:
+        st.subheader("약물-음식 상호작용 규칙")
+        df_interactions = load_interaction_db()
+        if not df_interactions.empty:
+            # 필터링
+            col1, col2 = st.columns(2)
+            with col1:
+                filter_drug = st.text_input("💊 약물 필터", placeholder="약물명 입력")
+            with col2:
+                filter_food = st.text_input("🍽️ 음식 필터", placeholder="음식명 입력")
+            
+            if filter_drug:
+                df_interactions = df_interactions[df_interactions['drug_name'].str.contains(filter_drug, case=False)]
+            if filter_food:
+                df_interactions = df_interactions[df_interactions['food_name'].str.contains(filter_food, case=False)]
+
+            st.dataframe(
+                df_interactions,
+                use_container_width=True,
+                column_config={
+                    "drug_name": "약물명",
+                    "drug_ingredient": "성분명",
+                    "drug_category": "약물 분류",
+                    "food_name": "음식명",
+                    "food_category": "음식 분류",
+                    "risk_level": st.column_config.SelectboxColumn(
+                        "위험도",
+                        options=["safe", "caution", "danger"],
+                        help="safe: 안전, caution: 주의, danger: 위험"
+                    ),
+                    "interaction_mechanism": "상호작용 기전",
+                    "clinical_effect": "임상적 효과",
+                    "recommendation": "권장사항",
+                    "alternative_food": "대체 음식",
+                    "source": "출처"
+                }
+            )
+            st.caption(f"총 {len(df_interactions)}개의 상호작용 규칙이 등록되어 있습니다.")
+        else:
+            st.info("등록된 상호작용 데이터가 없습니다.")
+
 # ===== 사이드바 =====
 def render_sidebar():
     """사이드바 렌더링"""
@@ -1107,7 +1206,7 @@ def main():
         st.info("💡 [Google AI Studio](https://aistudio.google.com/apikey)에서 무료 API 키를 발급받아 .env 파일의 GOOGLE_API_KEY에 입력하세요.")
     
     # 탭 구성
-    tab1, tab2, tab3 = st.tabs(["🔍 빠른 확인", "💬 AI 상담", "⚠️ 주의 음식"])
+    tab1, tab2, tab3, tab4 = st.tabs(["🔍 빠른 확인", "💬 AI 상담", "⚠️ 주의 음식", "💊 약물 DB"])
     
     with tab1:
         render_quick_check()
@@ -1117,6 +1216,9 @@ def main():
     
     with tab3:
         render_warnings()
+        
+    with tab4:
+        render_drug_db()
     
     # 푸터
     st.markdown("---")
