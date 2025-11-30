@@ -176,34 +176,56 @@ def render_sidebar():
         # 내 약물 관리
         st.markdown("## 💊 내 약물 관리")
         
+        # 약물 데이터 로드 (캐싱)
+        @st.cache_data
+        def load_drug_list():
+            try:
+                drugs_df = pd.read_csv(APP_DIR / "../data/drugs.csv")
+                return drugs_df['drug_name'].tolist()
+            except Exception as e:
+                st.error(f"약물 목록 로드 실패: {e}")
+                return []
+
+        drug_list = load_drug_list()
+        
         # 약물 등록 폼
         with st.form("drug_form", clear_on_submit=True, enter_to_submit=False):
-            drug_name = st.text_input("약물명", placeholder="예: 암로디핀")
+            # 자동완성을 위한 selectbox (입력 가능)
+            drug_name = st.selectbox(
+                "약물명 검색", 
+                options=[""] + drug_list, # 빈 옵션 추가
+                placeholder="약물명을 입력하거나 선택하세요",
+                index=0
+            )
+            
             # drug_category는 AI가 자동 분류
             dosage = st.text_input("복용량 (선택)", placeholder="예: 5mg 1일 1회")
             
             submitted = st.form_submit_button("➕ 약물 등록", use_container_width=True)
             
-            if submitted and drug_name:
-                with st.spinner("약물 분류를 확인 중입니다..."):
-                    drug_category = st.session_state.agent.categorize_drug(drug_name)
-                
-                if drug_category.startswith("Error:"):
-                    st.error(f"⚠️ 분류 오류: {drug_category}")
-                    drug_category = "기타"
-                
-                result = st.session_state.agent.user_db.register_drug(
-                    user_id=st.session_state.user_id,
-                    drug_name=drug_name,
-                    drug_category=drug_category,
-                    dosage=dosage if dosage else None
-                )
-                if result['success']:
-                    st.success(f"✅ {drug_name} ({drug_category}) 등록 완료!")
-                    # st.rerun() 제거: 메시지가 유지되도록 함. 
-                    # 목록은 아래에서 렌더링되므로 자동으로 업데이트됨.
+            if submitted:
+                if not drug_name:
+                    st.warning("약물명을 선택하거나 입력해주세요.")
                 else:
-                    st.error(result['message'])
+                    with st.spinner("약물 분류를 확인 중입니다..."):
+                        drug_category = st.session_state.agent.categorize_drug(drug_name)
+                    
+                    if drug_category.startswith("Error:"):
+                        st.error(f"⚠️ 분류 오류: {drug_category}")
+                        drug_category = "기타"
+                    
+                    result = st.session_state.agent.user_db.register_drug(
+                        user_id=st.session_state.user_id,
+                        drug_name=drug_name,
+                        drug_category=drug_category,
+                        dosage=dosage if dosage else None
+                    )
+                    if result['success']:
+                        st.success(f"✅ {drug_name} ({drug_category}) 등록 완료!")
+                        # st.rerun() 제거: 메시지가 유지되도록 함. 
+                        # 목록은 아래에서 렌더링되므로 자동으로 업데이트됨.
+                    else:
+                        st.error(result['message'])
         
         # 등록된 약물 목록
         st.markdown("### 📋 등록된 약물")
