@@ -29,7 +29,7 @@ OPENAI_MODEL = secrets.get("OPENAI_MODEL", os.getenv("OPENAI_MODEL", "gpt-4o-min
 
 # Google Gemini 설정
 GOOGLE_API_KEY = secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY", ""))
-GEMINI_MODEL = secrets.get("GEMINI_MODEL", os.getenv("GEMINI_MODEL", "gemini-1.5-flash-001"))
+GEMINI_MODEL = secrets.get("GEMINI_MODEL", os.getenv("GEMINI_MODEL", "gemini-pro"))
 
 # ChromaDB 설정
 CHROMA_PERSIST_DIR = str(DATA_DIR / "chroma_db")
