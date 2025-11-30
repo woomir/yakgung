@@ -30,12 +30,13 @@ st.markdown("""
 <style>
     /* 메인 헤더 (배너 스타일) */
     .main-header-container {
-        background-color: #1e3a5f;
+        background: linear-gradient(135deg, #1e3a5f 0%, #142841 100%);
         padding: 2rem;
         border-radius: 10px;
         text-align: center;
         margin-bottom: 2rem;
         color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .main-header-title {
         font-size: 2.5rem;
