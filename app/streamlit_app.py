@@ -28,22 +28,26 @@ st.set_page_config(
 # ===== CSS 스타일 =====
 st.markdown("""
 <style>
-    .main-header {
+    /* 메인 헤더 (배너 스타일) */
+    .main-header-container {
+        background-color: #1e3a5f;
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: white;
+    }
+    .main-header-title {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #1e3a5f;
-        text-align: center;
-        padding: 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
     }
-    .sub-header {
-        text-align: center;
-        color: #666;
-        margin-bottom: 2rem;
+    .main-header-subtitle {
+        font-size: 1rem;
+        opacity: 0.8;
     }
+    
+    /* 카드 스타일 */
     .drug-card {
         background: #f8f9fa;
         border-radius: 10px;
@@ -51,6 +55,8 @@ st.markdown("""
         margin: 0.5rem 0;
         border-left: 4px solid #667eea;
     }
+    
+    /* 위험도 스타일 */
     .risk-danger { 
         background: #ffebee; 
         border-left: 4px solid #dc3545; 
@@ -79,9 +85,20 @@ st.markdown("""
         border-radius: 8px;
         margin: 0.5rem 0;
     }
+    
+    /* 버튼 스타일 */
     .stButton > button {
         width: 100%;
+        border-radius: 5px;
+        height: 3rem;
     }
+    
+    /* 카테고리 버튼 색상 (커스텀) */
+    div[data-testid="column"] > div > div > div > div > div > button {
+        font-weight: bold;
+    }
+
+    /* 채팅 메시지 */
     .chat-message {
         padding: 1rem;
         border-radius: 10px;
@@ -229,40 +246,53 @@ def render_sidebar():
 # ===== 빠른 확인 탭 =====
 def render_quick_check():
     """빠른 상호작용 확인"""
+    # 카테고리 버튼
     st.markdown("### 🔍 빠른 상호작용 확인")
-    st.caption("음식명을 입력하면 등록된 약물과의 상호작용을 바로 확인합니다.")
+    st.caption("스타벅스 커피, 치킨, 김치찌개 등 음식명을 입력해 상호작용을 확인할 수 있습니다.")
     
-    # 자주 묻는 음식 버튼
-    st.markdown("**자주 묻는 음식:**")
+    st.markdown("**사용되는 음식:**")
     col1, col2, col3, col4, col5 = st.columns(5)
     
-    food_buttons = [
-        ("🍊 자몽", "자몽"),
-        ("🍺 맥주", "맥주"),
-        ("🥛 우유", "우유"),
-        ("☕ 커피", "커피"),
-        ("🥬 시금치", "시금치")
+    categories = [
+        ("🍎 과일", "과일"),
+        ("🥦 채소", "채소"),
+        ("🥩 고기/생선", "고기"),
+        ("🥛 유제품", "유제품"),
+        ("🌿 기타", "기타")
     ]
     
-    selected_food = None
-    for col, (label, food) in zip([col1, col2, col3, col4, col5], food_buttons):
+    selected_category = None
+    for col, (label, category) in zip([col1, col2, col3, col4, col5], categories):
         with col:
             if st.button(label, use_container_width=True):
-                selected_food = food
-    
-    # 직접 입력
-    col1, col2 = st.columns([3, 1])
+                selected_category = category
+
+    # 검색바 스타일 입력
+    col1, col2 = st.columns([4, 1])
     with col1:
         food_input = st.text_input(
             "음식명 입력",
-            placeholder="확인하고 싶은 음식을 입력하세요",
+            placeholder="친구들과 먹고 싶은데 나는 치킨 먹어도 돼요?",
             label_visibility="collapsed"
         )
     with col2:
         check_button = st.button("확인", type="primary", use_container_width=True)
     
-    # 확인 실행
-    food_to_check = selected_food or (food_input if check_button else None)
+    # 확인 실행 (카테고리 선택 시 해당 카테고리 대표 음식 예시로 확인)
+    food_to_check = None
+    if selected_category:
+        # 카테고리별 예시 음식 매핑
+        examples = {
+            "과일": "자몽",
+            "채소": "시금치",
+            "고기": "소고기",
+            "유제품": "우유",
+            "기타": "커피"
+        }
+        food_to_check = examples.get(selected_category)
+        st.info(f"💡 '{selected_category}' 카테고리 예시로 '{food_to_check}'을(를) 확인합니다.")
+    elif check_button and food_input:
+        food_to_check = food_input
     
     if food_to_check:
         result = st.session_state.agent.check_interaction(
@@ -452,8 +482,13 @@ def render_warnings():
 def main():
     """메인 애플리케이션"""
     # 헤더
-    st.markdown('<h1 class="main-header">💊 약궁 (YakGung) 🥗</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">약물-음식 상호작용을 확인하고 안전하게 식사하세요</p>', unsafe_allow_html=True)
+    # 헤더 (배너 스타일)
+    st.markdown("""
+        <div class="main-header-container">
+            <div class="main-header-title">💊 약궁 (YakGung)</div>
+            <div class="main-header-subtitle">약과 음식 상호작용을 확인하고 안전하게 복용하세요</div>
+        </div>
+    """, unsafe_allow_html=True)
     
     # 사이드바
     render_sidebar()
