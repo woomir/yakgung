@@ -10,6 +10,7 @@ import uuid
 import yaml
 from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
+from streamlit_authenticator.utilities.hasher import Hasher
 
 # 경로 설정
 APP_DIR = Path(__file__).parent
@@ -521,15 +522,39 @@ def main():
         st.warning('아이디와 비밀번호를 입력하세요.')
     
     if not st.session_state["authentication_status"]:
-        try:
-            email_of_registered_user, username_of_registered_user, name_of_registered_user = authenticator.register_user(location='main')
-            if email_of_registered_user:
-                st.success('회원가입이 완료되었습니다. 이제 로그인해주세요!')
-                # config 파일 업데이트
-                with open(APP_DIR / '../auth_config.yaml', 'w') as file:
-                    yaml.dump(config, file, default_flow_style=False)
-        except Exception as e:
-            st.error(e)
+        with st.expander("회원가입 (Register)", expanded=False):
+            with st.form("register_form"):
+                new_username = st.text_input("아이디 (Username)")
+                new_password = st.text_input("비밀번호 (Password)", type="password")
+                new_password_repeat = st.text_input("비밀번호 확인 (Repeat Password)", type="password")
+                submit_button = st.form_submit_button("가입하기")
+
+                if submit_button:
+                    if new_username and new_password:
+                        if new_password != new_password_repeat:
+                            st.error("비밀번호가 일치하지 않습니다.")
+                        elif new_username in config['credentials']['usernames']:
+                            st.error("이미 존재하는 아이디입니다.")
+                        else:
+                            # 비밀번호 해싱
+                            hashed_password = Hasher().hash(new_password)
+                            
+                            # 새 사용자 정보 생성 (이메일/이름은 아이디와 동일하게 설정)
+                            new_user_info = {
+                                'email': f"{new_username}@example.com",
+                                'name': new_username,
+                                'password': hashed_password
+                            }
+                            
+                            # Config 업데이트
+                            config['credentials']['usernames'][new_username] = new_user_info
+                            
+                            with open(APP_DIR / '../auth_config.yaml', 'w') as file:
+                                yaml.dump(config, file, default_flow_style=False)
+                            
+                            st.success("회원가입 성공! 이제 로그인해주세요.")
+                    else:
+                        st.warning("모든 필드를 입력해주세요.")
         return
     
     # 로그인 성공 시 사이드바에 로그아웃 버튼 표시
