@@ -170,6 +170,10 @@ def render_sidebar():
                 with st.spinner("약물 분류를 확인 중입니다..."):
                     drug_category = st.session_state.agent.categorize_drug(drug_name)
                 
+                if drug_category.startswith("Error:"):
+                    st.error(f"⚠️ 분류 오류: {drug_category}")
+                    drug_category = "기타"
+                
                 result = st.session_state.agent.user_db.register_drug(
                     user_id=st.session_state.user_id,
                     drug_name=drug_name,

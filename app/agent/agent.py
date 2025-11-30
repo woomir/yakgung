@@ -365,8 +365,7 @@ class DrugFoodAgent:
                     
             return "기타"
         except Exception as e:
-            print(f"Error categorizing drug: {e}")
-            return "기타"
+            return f"Error: {str(e)}"
 
     def clear_history(self):
         """대화 기록 초기화"""
