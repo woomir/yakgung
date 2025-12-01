@@ -1,5 +1,9 @@
 import requests
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Food Nutrition DB API Base URL
 # Based on search results: http://openapi.foodsafetykorea.go.kr/api/{key}/{serviceId}/{type}/{start}/{end}
@@ -11,9 +15,7 @@ START_IDX = "1"
 END_IDX = "5"
 
 # User provided key (Decoding)
-# Note: FoodSafetyKorea usually uses the key directly in the URL path, not as a query param.
-# Let's try the decoding key first.
-API_KEY = "UpyO/rN1+4lHyJ6uqJOqWcpMTmnMh3ghQ5qqOHP/MftGPiCa9Y9mI4MQNXN9Jl1eX+sZTBPPtSD//+8a7CtZzg=="
+API_KEY = os.getenv("FOOD_API_KEY", "YOUR_API_KEY_HERE")
 
 def test_food_api():
     # Construct URL: http://openapi.foodsafetykorea.go.kr/api/keyId/serviceId/dataType/startIdx/endIdx
