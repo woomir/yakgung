@@ -203,12 +203,12 @@ def render_drug_db():
                 column_config={
                     "drug_id": "ID",
                     "drug_name": "약물명",
-                    "drug_ingredient": "성분명",
-                    "drug_category": "분류",
-                    "common_conditions": "적응증",
-                    "dosage_form": "제형",
-                    "typical_dosage": "용법용량",
-                    "precautions": "주의사항"
+                    "drug_name": "약물명",
+                    "manufacturer": "제조사",
+                    "efficacy": "효능/효과",
+                    "usage": "용법/용량",
+                    "precautions": "주의사항",
+                    "storage": "보관방법"
                 }
             )
             st.caption(f"총 {len(df_drugs)}개의 의약품이 등록되어 있습니다.")

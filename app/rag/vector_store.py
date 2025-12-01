@@ -47,28 +47,9 @@ class DrugFoodRAG:
         self.persist_dir = persist_dir
         Path(persist_dir).mkdir(parents=True, exist_ok=True)
         
-        # 간단한 해시 기반 임베딩 함수 (네트워크 불필요)
-        from chromadb.utils.embedding_functions import EmbeddingFunction
-        
-        class SimpleEmbedding(EmbeddingFunction):
-            """간단한 키워드 기반 임베딩 (네트워크 불필요)"""
-            def __call__(self, input: List[str]) -> List[List[float]]:
-                embeddings = []
-                for text in input:
-                    # 간단한 해시 기반 임베딩 생성
-                    import hashlib
-                    hash_obj = hashlib.md5(text.encode())
-                    hash_bytes = hash_obj.digest()
-                    # 384차원 벡터 생성 (정규화)
-                    embedding = []
-                    for i in range(384):
-                        byte_idx = i % len(hash_bytes)
-                        value = (hash_bytes[byte_idx] + i * 7) % 256
-                        embedding.append((value - 128) / 128.0)
-                    embeddings.append(embedding)
-                return embeddings
-        
-        self.embedding_fn = SimpleEmbedding()
+        # Gemini API Quota 제한으로 인해 로컬 임베딩(ONNX MiniLM)으로 전환
+        # ChromaDB 기본 임베딩 사용 (무료, 무제한, 로컬 동작)
+        self.embedding_fn = None 
         
         # ChromaDB 클라이언트 초기화
         self.client = chromadb.PersistentClient(
@@ -77,11 +58,23 @@ class DrugFoodRAG:
         )
         
         # 컬렉션 가져오기 또는 생성
-        self.collection = self.client.get_or_create_collection(
-            name=COLLECTION_NAME,
-            metadata={"description": "Drug-Food Interactions Database"},
-            embedding_function=self.embedding_fn
-        )
+        try:
+            self.collection = self.client.get_or_create_collection(
+                name=COLLECTION_NAME,
+                metadata={"description": "Drug-Food Interactions Database"}
+                # embedding_function=None implies default
+            )
+        except ValueError as e:
+            # 임베딩 함수 변경으로 인한 충돌 시 컬렉션 재성성
+            if "Embedding function conflict" in str(e):
+                print("⚠️ 임베딩 함수 변경 감지. 컬렉션을 재생성합니다.")
+                self.client.delete_collection(COLLECTION_NAME)
+                self.collection = self.client.create_collection(
+                    name=COLLECTION_NAME,
+                    metadata={"description": "Drug-Food Interactions Database"}
+                )
+            else:
+                raise e
         
         # 약물 및 음식 데이터 로드
         self.drugs_df = None

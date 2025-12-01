@@ -14,11 +14,13 @@ BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 
 # Streamlit Secrets 로드 시도
+secrets = {}
 try:
     import streamlit as st
-    secrets = st.secrets
-except (ImportError, FileNotFoundError):
-    secrets = {}
+    # Convert to dict to force load and catch error if missing
+    secrets = dict(st.secrets)
+except Exception:
+    pass
 
 # LLM 설정 (OpenAI or Google Gemini)
 LLM_PROVIDER = secrets.get("LLM_PROVIDER", os.getenv("LLM_PROVIDER", "gemini"))
