@@ -358,6 +358,11 @@ def render_sidebar():
         st.metric("총 상호작용 데이터", f"{stats['total_interactions']}건")
         st.metric("약물 종류", f"{stats['drugs']}종")
         st.metric("음식 종류", f"{stats['foods']}종")
+        
+        if st.button("🔄 데이터 새로고침", use_container_width=True):
+            st.cache_data.clear()
+            st.cache_resource.clear()
+            st.rerun()
 
 
 # ===== 빠른 확인 탭 =====
