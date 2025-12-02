@@ -1176,14 +1176,22 @@ def main():
         config['cookie']['expiry_days']
     )
 
-    authenticator.login(location='main')
+    # 로그인 위젯을 담을 컨테이너 (로그인 성공 시 제거하기 위해)
+    login_container = st.empty()
+    
+    with login_container:
+        authenticator.login(location='main')
 
     if st.session_state["authentication_status"] is False:
         st.error('아이디 또는 비밀번호가 일치하지 않습니다.')
     elif st.session_state["authentication_status"] is None:
         st.warning('아이디와 비밀번호를 입력하세요.')
     
-    if not st.session_state["authentication_status"]:
+    if st.session_state["authentication_status"]:
+        # 로그인 성공 시 로그인 위젯 컨테이너 비우기 (화면 전환 속도 개선)
+        login_container.empty()
+    else:
+        # 로그인 실패/미로그인 시 회원가입 폼 표시
         with st.expander("회원가입 (Register)", expanded=False):
             with st.form("register_form"):
                 new_username = st.text_input("아이디 (Username)")
