@@ -348,7 +348,6 @@ class DrugFoodAgent:
             "caution_count": caution_count,
             "safe_count": safe_count,
             "message": message,
-            "message": message,
             "interactions": interactions,
             "extracted_food": food_name # 추출된 음식명 반환
         }

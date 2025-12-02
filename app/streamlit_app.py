@@ -11,6 +11,7 @@ import yaml
 from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 from streamlit_authenticator.utilities.hasher import Hasher
+import html
 
 # 경로 설정
 APP_DIR = Path(__file__).parent
@@ -143,12 +144,9 @@ def init_session_state():
     if 'provider' not in st.session_state:
         st.session_state.provider = "gemini"
 
-    # API 키 업데이트 (Secrets 변경 사항 반영)
-    st.session_state.api_key = GOOGLE_API_KEY
-
     # Agent 초기화 (캐싱 사용)
-    # API 키가 변경되면 새로운 Agent 생성
-    st.session_state.agent = get_agent(st.session_state.provider, st.session_state.api_key)
+    # API 키는 세션에 저장하지 않고 직접 전달 (보안)
+    st.session_state.agent = get_agent(st.session_state.provider, GOOGLE_API_KEY)
 
     if 'messages' not in st.session_state:
         st.session_state.messages = []
@@ -465,11 +463,21 @@ def render_quick_check():
             st.markdown("#### 📋 상세 정보")
             for inter in result['interactions']:
                 risk_class = f"risk-{inter['risk_level']}"
+                # XSS 방지: HTML escape 처리
+                safe_drug_name = html.escape(str(inter['drug_name']))
+                safe_food_name = html.escape(str(inter['food_name']))
+                safe_recommendation = html.escape(str(inter['recommendation']))
+                safe_alternative = html.escape(str(inter.get('alternative', '')))
+
+                alternative_text = ""
+                if inter.get('alternative') and str(inter['alternative']).lower() != 'nan':
+                    alternative_text = f"🔄 대안: {safe_alternative}<br>"
+
                 st.markdown(f"""
                 <div class="{risk_class}">
-                    <strong>{inter['risk_emoji']} {inter['drug_name']} + {inter['food_name']}</strong><br>
-                    ➡️ {inter['recommendation']}<br>
-                    {"🔄 대안: " + inter['alternative'] if inter.get('alternative') and inter['alternative'] != 'nan' else ""}
+                    <strong>{inter['risk_emoji']} {safe_drug_name} + {safe_food_name}</strong><br>
+                    ➡️ {safe_recommendation}<br>
+                    {alternative_text}
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -582,20 +590,28 @@ def render_warnings():
     if danger_items:
         st.markdown("#### 🔴 절대 금기 음식")
         for item in danger_items:
+            # XSS 방지: HTML escape 처리
+            safe_drug_name = html.escape(str(item['drug_name']))
+            safe_food_name = html.escape(str(item['food_name']))
+            safe_recommendation = html.escape(str(item['recommendation']))
             st.markdown(f"""
             <div class="risk-danger">
-                <strong>💊 {item['drug_name']}</strong> + <strong>🍽️ {item['food_name']}</strong><br>
-                ➡️ {item['recommendation']}
+                <strong>💊 {safe_drug_name}</strong> + <strong>🍽️ {safe_food_name}</strong><br>
+                ➡️ {safe_recommendation}
             </div>
             """, unsafe_allow_html=True)
     
     if warning_items:
         st.markdown("#### 🟠 주의 필요 음식")
         for item in warning_items:
+            # XSS 방지: HTML escape 처리
+            safe_drug_name = html.escape(str(item['drug_name']))
+            safe_food_name = html.escape(str(item['food_name']))
+            safe_recommendation = html.escape(str(item['recommendation']))
             st.markdown(f"""
             <div class="risk-warning">
-                <strong>💊 {item['drug_name']}</strong> + <strong>🍽️ {item['food_name']}</strong><br>
-                ➡️ {item['recommendation']}
+                <strong>💊 {safe_drug_name}</strong> + <strong>🍽️ {safe_food_name}</strong><br>
+                ➡️ {safe_recommendation}
             </div>
             """, unsafe_allow_html=True)
 
@@ -1206,7 +1222,7 @@ def main():
     render_sidebar()
     
     # API 키 확인
-    if not st.session_state.api_key:
+    if not GOOGLE_API_KEY:
         st.error("⚠️ Google API Key가 설정되지 않았습니다. .env 파일을 확인해주세요.")
         st.info("💡 [Google AI Studio](https://aistudio.google.com/apikey)에서 무료 API 키를 발급받아 .env 파일의 GOOGLE_API_KEY에 입력하세요.")
     
