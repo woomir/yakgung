@@ -1146,12 +1146,11 @@ def main():
             pass
             
     if not config:
-        st.error("인증 설정(secrets 또는 auth_config.yaml)을 찾을 수 없습니다.")
         # 임시 데모 모드 (비상용)
-        # return 
+        # 인증 설정이 없을 경우 에러 대신 경고를 띄우고 데모 모드로 진입
         
         # 비상용 기본 설정 (배포 직후 에러 방지용, 실제로는 secrets 설정 필요)
-        st.warning("⚠️ 기본 데모 계정으로 실행됩니다. (admin / 1234)")
+        st.warning("⚠️ 인증 설정이 없어 기본 데모 계정으로 실행됩니다. (admin / 1234)")
         config = {
             "credentials": {
                 "usernames": {
