@@ -619,7 +619,11 @@ def render_warnings():
 # ===== 메인 =====
 def render_landing_page():
     """랜딩 페이지 렌더링"""
-    st.markdown("""
+    # 화면 전환 시 잔상 제거를 위한 컨테이너
+    landing_container = st.empty()
+    
+    with landing_container.container():
+        st.markdown("""
         <style>
         :root {
             --primary: #0A1628;
@@ -883,238 +887,240 @@ def render_landing_page():
             margin-top: 1rem;
         }
         </style>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # Hero Section
-    st.markdown("""
-        <div class="landing-container">
-            <div class="hero">
-                <div class="badge">Health & Wellness RAG Agent AI</div>
-                <h1><span class="highlight">DrugFood</span> Guard</h1>
-                <p class="hero-subtitle">
-                    복용 중인 약물과 음식 간의 상호작용 위험을 실시간으로 분석하여<br>
-                    안전한 복약 생활을 지원하는 <strong>RAG 기반 AI Agent</strong>
-                </p>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <div class="stat-value">1,500만+</div>
-                        <div class="stat-label">만성질환 복약자</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">6.5개</div>
-                        <div class="stat-label">65세 이상 평균 복용약</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">30%</div>
-                        <div class="stat-label">약물 부작용 중 상호작용</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        if st.button("🚀 약궁 시작하기", key="hero_start", type="primary", use_container_width=True):
-            st.session_state.show_landing = False
-            st.rerun()
-
-    # Overview Section
-    st.markdown("""
-        <div class="landing-container">
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-number">01</div>
-                    <h2 class="section-title">Project Overview</h2>
-                    <p class="section-desc">프로젝트의 목적, 핵심 문제, 기대 효과</p>
-                </div>
-                <div class="overview-grid">
-                    <div class="card overview-card">
-                        <div class="overview-icon">🎯</div>
-                        <h3>목적 (Purpose)</h3>
-                        <p>복용 중인 약물과 섭취하려는 음식/음료/건강기능식품 간의 상호작용 위험을 실시간으로 분석하여, 안전한 복약 생활을 지원하는 AI Agent 개발</p>
-                    </div>
-                    <div class="card overview-card">
-                        <div class="overview-icon">⚡</div>
-                        <h3>핵심 문제 (Core Problem)</h3>
-                        <p>다약제 복용자가 증가하는 고령화 사회에서, 약-음식 상호작용에 대한 정보 접근성이 낮아 부작용 위험에 무방비로 노출됨</p>
-                    </div>
-                    <div class="card overview-card">
-                        <div class="overview-icon">✨</div>
-                        <h3>기대 효과 (Expected Effects)</h3>
-                        <p>약물 부작용 사전 예방, 복약 순응도 향상, 불필요한 응급실 방문 감소, 의료비 절감 및 삶의 질 개선</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Problem Section
-    st.markdown("""
-        <div class="landing-container">
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-number">02</div>
-                    <h2 class="section-title">Why DrugFood Guard?</h2>
-                    <p class="section-desc">일상 속 숨겨진 위험을 찾아냅니다</p>
-                </div>
-                <div class="problem-list">
-                    <div class="problem-item">
-                        <div class="problem-item-icon">📊</div>
-                        <div>
-                            <h4>다약제 복용의 일상화</h4>
-                            <p>65세 이상 노인 평균 6.5개 약물 복용. 복용 약물이 많을수록 상호작용 위험이 기하급수적으로 증가합니다.</p>
+        # Hero Section
+        st.markdown("""
+            <div class="landing-container">
+                <div class="hero">
+                    <div class="badge">Health & Wellness RAG Agent AI</div>
+                    <h1><span class="highlight">DrugFood</span> Guard</h1>
+                    <p class="hero-subtitle">
+                        복용 중인 약물과 음식 간의 상호작용 위험을 실시간으로 분석하여<br>
+                        안전한 복약 생활을 지원하는 <strong>RAG 기반 AI Agent</strong>
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-value">1,500만+</div>
+                            <div class="stat-label">만성질환 복약자</div>
                         </div>
-                    </div>
-                    <div class="problem-item">
-                        <div class="problem-item-icon">🔍</div>
-                        <div>
-                            <h4>정보 접근성의 한계</h4>
-                            <p>약사 상담은 시간 부족, 인터넷 검색은 신뢰도 불확실, 기존 앱은 약-약 상호작용만 제공합니다.</p>
+                        <div class="stat">
+                            <div class="stat-value">6.5개</div>
+                            <div class="stat-label">65세 이상 평균 복용약</div>
                         </div>
-                    </div>
-                    <div class="problem-item">
-                        <div class="problem-item-icon">⚠️</div>
-                        <div>
-                            <h4>실제 피해 사례</h4>
-                            <p>와파린+청국장(약효 감소), 스타틴+자몽(농도 급상승), 항생제+유제품(흡수 저하) 등 심각한 부작용 발생</p>
-                        </div>
-                    </div>
-                    <div class="problem-item">
-                        <div class="problem-item-icon">🤖</div>
-                        <div>
-                            <h4>AI Agent의 필요성</h4>
-                            <p>복합 데이터 분석, 개인 맞춤 판단, 자연어 질의 대응, 실시간 최신 정보 반영이 필요합니다.</p>
+                        <div class="stat">
+                            <div class="stat-value">30%</div>
+                            <div class="stat-label">약물 부작용 중 상호작용</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # Features (MVP) Section
-    st.markdown("""
-        <div class="landing-container">
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-number">03</div>
-                    <h2 class="section-title">Key Features</h2>
-                    <p class="section-desc">안전한 복약 생활을 위한 핵심 기능</p>
-                </div>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <div class="feature-number">F1</div>
-                        <h4>복용약 등록</h4>
-                        <p>약 이름을 검색하여 내 약통에 저장하고 관리합니다.</p>
-                        <span class="feature-priority">★★★ 필수</span>
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            if st.button("🚀 약궁 시작하기", key="hero_start", type="primary", use_container_width=True):
+                landing_container.empty() # 즉시 비우기
+                st.session_state.show_landing = False
+                st.rerun()
+
+        # Overview Section
+        st.markdown("""
+            <div class="landing-container">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-number">01</div>
+                        <h2 class="section-title">Project Overview</h2>
+                        <p class="section-desc">프로젝트의 목적, 핵심 문제, 기대 효과</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-number">F2</div>
-                        <h4>음식 상호작용 체크</h4>
-                        <p>"이거 먹어도 돼?" 질문에 위험도와 이유를 설명합니다.</p>
-                        <span class="feature-priority">★★★ 필수</span>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-number">F3</div>
-                        <h4>안전한 대안 제시</h4>
-                        <p>위험 판정 시 대신 섭취 가능한 안전한 음식을 추천합니다.</p>
-                        <span class="feature-priority">★★☆ 권장</span>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-number">F4</div>
-                        <h4>주의사항 알림</h4>
-                        <p>약 복용 시 피해야 할 생활 습관과 주의사항을 안내합니다.</p>
-                        <span class="feature-priority">★★☆ 권장</span>
+                    <div class="overview-grid">
+                        <div class="card overview-card">
+                            <div class="overview-icon">🎯</div>
+                            <h3>목적 (Purpose)</h3>
+                            <p>복용 중인 약물과 섭취하려는 음식/음료/건강기능식품 간의 상호작용 위험을 실시간으로 분석하여, 안전한 복약 생활을 지원하는 AI Agent 개발</p>
+                        </div>
+                        <div class="card overview-card">
+                            <div class="overview-icon">⚡</div>
+                            <h3>핵심 문제 (Core Problem)</h3>
+                            <p>다약제 복용자가 증가하는 고령화 사회에서, 약-음식 상호작용에 대한 정보 접근성이 낮아 부작용 위험에 무방비로 노출됨</p>
+                        </div>
+                        <div class="card overview-card">
+                            <div class="overview-icon">✨</div>
+                            <h3>기대 효과 (Expected Effects)</h3>
+                            <p>약물 부작용 사전 예방, 복약 순응도 향상, 불필요한 응급실 방문 감소, 의료비 절감 및 삶의 질 개선</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # Effects Section
-    st.markdown("""
-        <div class="landing-container">
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-number">04</div>
-                    <h2 class="section-title">Benefits</h2>
-                    <p class="section-desc">DrugFood Guard가 가져올 변화</p>
-                </div>
-                <div class="effects-grid">
-                    <div class="card">
-                        <h3>✨ 기대효과</h3>
-                        <br>
-                        <div class="effect-item">
-                            <div class="effect-icon">🛡️</div>
-                            <div>
-                                <h4>약물 부작용 사전 예방</h4>
-                                <p>상호작용 위험을 미리 인지하여 부작용 발생 감소</p>
-                            </div>
-                        </div>
-                        <div class="effect-item">
-                            <div class="effect-icon">💊</div>
-                            <div>
-                                <h4>복약 순응도 향상</h4>
-                                <p>안전한 식사 가이드로 약 복용 지속률 증가</p>
-                            </div>
-                        </div>
-                        <div class="effect-item">
-                            <div class="effect-icon">🏥</div>
-                            <div>
-                                <h4>의료비 절감</h4>
-                                <p>불필요한 응급실 방문 및 입원 감소</p>
-                            </div>
-                        </div>
+        # Problem Section
+        st.markdown("""
+            <div class="landing-container">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-number">02</div>
+                        <h2 class="section-title">Why DrugFood Guard?</h2>
+                        <p class="section-desc">일상 속 숨겨진 위험을 찾아냅니다</p>
                     </div>
-                    <div class="card" style="border-color: var(--danger);">
-                        <h3 style="color: var(--danger);">⚠️ 한계 및 면책</h3>
-                        <br>
-                        <div class="effect-item">
-                            <div class="effect-icon">⚖️</div>
+                    <div class="problem-list">
+                        <div class="problem-item">
+                            <div class="problem-item-icon">📊</div>
                             <div>
-                                <h4>의료 조언 한계</h4>
-                                <p>본 서비스는 정보 제공 목적이며, 의학적 진단을 대체하지 않습니다.</p>
+                                <h4>다약제 복용의 일상화</h4>
+                                <p>65세 이상 노인 평균 6.5개 약물 복용. 복용 약물이 많을수록 상호작용 위험이 기하급수적으로 증가합니다.</p>
                             </div>
                         </div>
-                        <div class="effect-item">
-                            <div class="effect-icon">👤</div>
+                        <div class="problem-item">
+                            <div class="problem-item-icon">🔍</div>
                             <div>
-                                <h4>개인차 미반영</h4>
-                                <p>개인의 특이 체질이나 기저질환에 따라 결과가 다를 수 있습니다.</p>
+                                <h4>정보 접근성의 한계</h4>
+                                <p>약사 상담은 시간 부족, 인터넷 검색은 신뢰도 불확실, 기존 앱은 약-약 상호작용만 제공합니다.</p>
                             </div>
                         </div>
-                        <div class="effect-item">
-                            <div class="effect-icon">📊</div>
+                        <div class="problem-item">
+                            <div class="problem-item-icon">⚠️</div>
                             <div>
-                                <h4>참고용 정보</h4>
-                                <p>최종 판단은 반드시 의사나 약사와 상담해야 합니다.</p>
+                                <h4>실제 피해 사례</h4>
+                                <p>와파린+청국장(약효 감소), 스타틴+자몽(농도 급상승), 항생제+유제품(흡수 저하) 등 심각한 부작용 발생</p>
+                            </div>
+                        </div>
+                        <div class="problem-item">
+                            <div class="problem-item-icon">🤖</div>
+                            <div>
+                                <h4>AI Agent의 필요성</h4>
+                                <p>복합 데이터 분석, 개인 맞춤 판단, 자연어 질의 대응, 실시간 최신 정보 반영이 필요합니다.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # CTA Section
-    st.markdown("""
-        <div class="landing-container">
-            <div class="section" style="text-align: center;">
-                <h2 class="section-title">Ready to Start?</h2>
-                <p class="section-desc" style="margin-bottom: 2rem;">
-                    지금 바로 DrugFood Guard와 함께 안전한 복약 생활을 시작하세요.
-                </p>
+        # Features (MVP) Section
+        st.markdown("""
+            <div class="landing-container">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-number">03</div>
+                        <h2 class="section-title">Key Features</h2>
+                        <p class="section-desc">안전한 복약 생활을 위한 핵심 기능</p>
+                    </div>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-number">F1</div>
+                            <h4>복용약 등록</h4>
+                            <p>약 이름을 검색하여 내 약통에 저장하고 관리합니다.</p>
+                            <span class="feature-priority">★★★ 필수</span>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-number">F2</div>
+                            <h4>음식 상호작용 체크</h4>
+                            <p>"이거 먹어도 돼?" 질문에 위험도와 이유를 설명합니다.</p>
+                            <span class="feature-priority">★★★ 필수</span>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-number">F3</div>
+                            <h4>안전한 대안 제시</h4>
+                            <p>위험 판정 시 대신 섭취 가능한 안전한 음식을 추천합니다.</p>
+                            <span class="feature-priority">★★☆ 권장</span>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-number">F4</div>
+                            <h4>주의사항 알림</h4>
+                            <p>약 복용 시 피해야 할 생활 습관과 주의사항을 안내합니다.</p>
+                            <span class="feature-priority">★★☆ 권장</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        if st.button("🚀 서비스 시작하기", key="cta_start", type="primary", use_container_width=True):
-            st.session_state.show_landing = False
-            st.rerun()
-    
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+        # Effects Section
+        st.markdown("""
+            <div class="landing-container">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-number">04</div>
+                        <h2 class="section-title">Benefits</h2>
+                        <p class="section-desc">DrugFood Guard가 가져올 변화</p>
+                    </div>
+                    <div class="effects-grid">
+                        <div class="card">
+                            <h3>✨ 기대효과</h3>
+                            <br>
+                            <div class="effect-item">
+                                <div class="effect-icon">🛡️</div>
+                                <div>
+                                    <h4>약물 부작용 사전 예방</h4>
+                                    <p>상호작용 위험을 미리 인지하여 부작용 발생 감소</p>
+                                </div>
+                            </div>
+                            <div class="effect-item">
+                                <div class="effect-icon">💊</div>
+                                <div>
+                                    <h4>복약 순응도 향상</h4>
+                                    <p>안전한 식사 가이드로 약 복용 지속률 증가</p>
+                                </div>
+                            </div>
+                            <div class="effect-item">
+                                <div class="effect-icon">🏥</div>
+                                <div>
+                                    <h4>의료비 절감</h4>
+                                    <p>불필요한 응급실 방문 및 입원 감소</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" style="border-color: var(--danger);">
+                            <h3 style="color: var(--danger);">⚠️ 한계 및 면책</h3>
+                            <br>
+                            <div class="effect-item">
+                                <div class="effect-icon">⚖️</div>
+                                <div>
+                                    <h4>의료 조언 한계</h4>
+                                    <p>본 서비스는 정보 제공 목적이며, 의학적 진단을 대체하지 않습니다.</p>
+                                </div>
+                            </div>
+                            <div class="effect-item">
+                                <div class="effect-icon">👤</div>
+                                <div>
+                                    <h4>개인차 미반영</h4>
+                                    <p>개인의 특이 체질이나 기저질환에 따라 결과가 다를 수 있습니다.</p>
+                                </div>
+                            </div>
+                            <div class="effect-item">
+                                <div class="effect-icon">📊</div>
+                                <div>
+                                    <h4>참고용 정보</h4>
+                                    <p>최종 판단은 반드시 의사나 약사와 상담해야 합니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # CTA Section
+        st.markdown("""
+            <div class="landing-container">
+                <div class="section" style="text-align: center;">
+                    <h2 class="section-title">Ready to Start?</h2>
+                    <p class="section-desc" style="margin-bottom: 2rem;">
+                        지금 바로 DrugFood Guard와 함께 안전한 복약 생활을 시작하세요.
+                    </p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            if st.button("🚀 서비스 시작하기", key="cta_start", type="primary", use_container_width=True):
+                landing_container.empty() # 즉시 비우기
+                st.session_state.show_landing = False
+                st.rerun()
+        
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
 
 def main():
     """메인 애플리케이션"""
