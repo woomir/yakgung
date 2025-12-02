@@ -1216,7 +1216,8 @@ def main():
     # 로그인 위젯을 담을 컨테이너 (로그인 성공 시 제거하기 위해)
     login_container = st.empty()
     
-    with login_container:
+    with login_container.container():
+        st.info("📢 **데모 버전 안내**: 팀원 분들은 아래 계정으로 로그인해주세요.\n\n- **ID**: `admin`\n- **PW**: `1234`")
         authenticator.login(location='main')
 
     if st.session_state["authentication_status"] is False:
