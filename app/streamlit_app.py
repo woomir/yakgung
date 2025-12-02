@@ -270,17 +270,22 @@ def render_sidebar():
         
         # 약물 데이터 로드 (캐싱)
         @st.cache_data
-        def load_drug_list():
+        def load_drug_data():
             try:
                 # 상호작용 정보가 있는 약물만 로드 (사용자 요청 반영)
                 interactions_df = pd.read_csv(APP_DIR / "../data/drug_food_interactions.csv")
-                # 중복 제거 및 정렬
-                return sorted(interactions_df['drug_name'].unique().tolist())
+                
+                # 약물명과 카테고리 매핑 생성 (중복 제거)
+                # 동일 약물에 여러 카테고리가 있을 수 있으므로 첫 번째 것 사용
+                drug_map = interactions_df.drop_duplicates('drug_name').set_index('drug_name')['drug_category'].to_dict()
+                
+                return drug_map
             except Exception as e:
                 st.error(f"약물 목록 로드 실패: {e}")
-                return []
+                return {}
 
-        drug_list = load_drug_list()
+        drug_map = load_drug_data()
+        drug_list = sorted(drug_map.keys())
         
         # 약물 등록 폼
         with st.form("drug_form", clear_on_submit=True, enter_to_submit=False):
@@ -301,12 +306,13 @@ def render_sidebar():
                 if not drug_name:
                     st.warning("약물명을 선택하거나 입력해주세요.")
                 else:
-                    with st.spinner("약물 분류를 확인 중입니다..."):
-                        drug_category = st.session_state.agent.categorize_drug(drug_name)
+                    # AI 분류 대신 로컬 데이터 사용 (속도 최적화)
+                    drug_category = drug_map.get(drug_name, "기타")
                     
-                    if drug_category.startswith("Error:"):
-                        st.error(f"⚠️ 분류 오류: {drug_category}")
-                        drug_category = "기타"
+                    # 사용자가 직접 입력한 약물의 경우 (목록에 없음)
+                    if drug_category == "기타" and drug_name not in drug_map:
+                        # 필요한 경우 여기서 간단한 규칙 기반 분류나 '기타' 유지
+                        pass
                     
                     result = st.session_state.agent.user_db.register_drug(
                         user_id=st.session_state.user_id,
