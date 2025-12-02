@@ -1154,10 +1154,7 @@ def main():
             pass
             
     if not config:
-        # 임시 데모 모드 (비상용)
-        # 인증 설정이 없을 경우 에러 대신 경고를 띄우고 데모 모드로 진입
-        
-        # 비상용 기본 설정 (배포 직후 에러 방지용, 실제로는 secrets 설정 필요)
+        # 비상용 기본 설정
         st.warning("⚠️ 인증 설정이 없어 기본 데모 계정으로 실행됩니다. (admin / 1234)")
         config = {
             "credentials": {
@@ -1176,6 +1173,23 @@ def main():
             },
             "preauthorized": {"emails": []}
         }
+
+    # 3. DB에서 사용자 정보 로드 및 병합 (Persistence 보장)
+    try:
+        # 임시 Agent 생성하여 DB 접근 (아직 로그인 전이라 session_state.agent가 없을 수 있음)
+        temp_db = UserDrugDB() 
+        db_users = temp_db.get_all_users()
+        
+        if db_users:
+            # 기존 config에 DB 사용자 병합
+            if 'credentials' not in config:
+                config['credentials'] = {'usernames': {}}
+            if 'usernames' not in config['credentials']:
+                config['credentials']['usernames'] = {}
+                
+            config['credentials']['usernames'].update(db_users)
+    except Exception as e:
+        st.error(f"DB 사용자 로드 실패: {e}")
 
     authenticator = stauth.Authenticate(
         config['credentials'],
@@ -1236,17 +1250,31 @@ def main():
                                 'password': hashed_password
                             }
                             
-                            # Config 업데이트
+                            # Config 업데이트 (메모리)
                             config['credentials']['usernames'][new_username] = new_user_info
                             
+                            # DB에 영구 저장 (Cloud 환경 대응)
+                            try:
+                                temp_db = UserDrugDB()
+                                temp_db.create_user(
+                                    user_id=new_username,
+                                    email=new_user_info['email'],
+                                    name=new_user_info['name'],
+                                    password=hashed_password
+                                )
+                                st.success("회원가입 성공! (DB 저장 완료)")
+                            except Exception as e:
+                                st.error(f"DB 저장 실패: {e}")
+
+                            # 로컬 파일 저장 시도 (선택적)
                             try:
                                 with open(APP_DIR / '../auth_config.yaml', 'w') as file:
                                     yaml.dump(config, file, default_flow_style=False)
-                                st.success("회원가입 성공! 이제 로그인해주세요.")
                             except Exception:
-                                # Cloud 환경 등 파일 쓰기가 불가능한 경우
-                                st.warning("⚠️ 클라우드 환경에서는 회원가입 정보가 영구 저장되지 않을 수 있습니다.")
-                                st.success("임시 가입 성공! (로그인 가능)")
+                                # Cloud 환경 등 파일 쓰기가 불가능한 경우 무시 (DB에 저장했으므로)
+                                pass
+                                
+                            st.info("이제 로그인해주세요.")
                     else:
                         st.warning("모든 필드를 입력해주세요.")
         return

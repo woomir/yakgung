@@ -32,14 +32,31 @@ class UserDrugDB:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        # 사용자 테이블
+        # 사용자 테이블 (인증 정보 추가)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 user_id TEXT PRIMARY KEY,
+                email TEXT,
+                name TEXT,
+                password TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        
+        # 기존 테이블에 컬럼이 없는 경우 추가 (마이그레이션)
+        try:
+            cursor.execute("ALTER TABLE users ADD COLUMN email TEXT")
+        except sqlite3.OperationalError:
+            pass
+        try:
+            cursor.execute("ALTER TABLE users ADD COLUMN name TEXT")
+        except sqlite3.OperationalError:
+            pass
+        try:
+            cursor.execute("ALTER TABLE users ADD COLUMN password TEXT")
+        except sqlite3.OperationalError:
+            pass
         
         # 사용자 등록 약물 테이블
         cursor.execute("""
@@ -77,20 +94,36 @@ class UserDrugDB:
         return sqlite3.connect(self.db_path)
     
     # ===== 사용자 관리 =====
-    def create_user(self, user_id: str) -> bool:
-        """새 사용자 생성"""
+    def create_user(self, user_id: str, email: str = None, name: str = None, password: str = None) -> bool:
+        """새 사용자 생성 (회원가입)"""
         try:
             conn = self._get_connection()
             cursor = conn.cursor()
-            cursor.execute(
-                "INSERT OR IGNORE INTO users (user_id) VALUES (?)",
-                (user_id,)
-            )
+            
+            # 이미 존재하는지 확인
+            cursor.execute("SELECT user_id FROM users WHERE user_id = ?", (user_id,))
+            if cursor.fetchone():
+                # 업데이트 (비밀번호 등)
+                cursor.execute("""
+                    UPDATE users 
+                    SET email = COALESCE(?, email),
+                        name = COALESCE(?, name),
+                        password = COALESCE(?, password),
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = ?
+                """, (email, name, password, user_id))
+            else:
+                # 신규 생성
+                cursor.execute(
+                    "INSERT INTO users (user_id, email, name, password) VALUES (?, ?, ?, ?)",
+                    (user_id, email, name, password)
+                )
+            
             conn.commit()
             conn.close()
             return True
         except Exception as e:
-            print(f"Error creating user: {e}")
+            print(f"Error creating/updating user: {e}")
             return False
     
     def get_user(self, user_id: str) -> Optional[Dict]:
@@ -98,7 +131,7 @@ class UserDrugDB:
         conn = self._get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT user_id, created_at, updated_at FROM users WHERE user_id = ?",
+            "SELECT user_id, email, name, password, created_at, updated_at FROM users WHERE user_id = ?",
             (user_id,)
         )
         row = cursor.fetchone()
@@ -107,10 +140,30 @@ class UserDrugDB:
         if row:
             return {
                 "user_id": row[0],
-                "created_at": row[1],
-                "updated_at": row[2]
+                "email": row[1],
+                "name": row[2],
+                "password": row[3],
+                "created_at": row[4],
+                "updated_at": row[5]
             }
         return None
+
+    def get_all_users(self) -> Dict[str, Dict]:
+        """모든 사용자 정보 조회 (Streamlit Authenticator 포맷)"""
+        conn = self._get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, email, name, password FROM users WHERE password IS NOT NULL")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        users_dict = {}
+        for row in rows:
+            users_dict[row[0]] = {
+                "email": row[1],
+                "name": row[2],
+                "password": row[3]
+            }
+        return users_dict
     
     # ===== 약물 등록 관리 =====
     def register_drug(
