@@ -1178,6 +1178,15 @@ def main():
     try:
         # 임시 Agent 생성하여 DB 접근 (아직 로그인 전이라 session_state.agent가 없을 수 있음)
         temp_db = UserDrugDB() 
+        
+        # Admin 계정이 DB에 없으면 자동 생성 (Cloud 배포 시 초기화 대응)
+        admin_id = "admin"
+        if not temp_db.get_user(admin_id):
+            # 1234
+            default_pw_hash = "$2b$12$qbGyuPnyvDaP1D7quPK36.bYGSFNWkqZS9wZExFpE3/Kc/IhdIefG" 
+            temp_db.create_user(admin_id, "admin@example.com", "Admin", default_pw_hash)
+            print("Default admin user created in DB.")
+
         db_users = temp_db.get_all_users()
         
         if db_users:
