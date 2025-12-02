@@ -1127,12 +1127,48 @@ def main():
         return
 
     # ===== 인증 (Authentication) =====
-    try:
-        with open(APP_DIR / '../auth_config.yaml') as file:
-            config = yaml.load(file, Loader=SafeLoader)
-    except FileNotFoundError:
-        st.error("인증 설정 파일(auth_config.yaml)을 찾을 수 없습니다.")
-        return
+    config = None
+    
+    # 1. Streamlit Secrets에서 로드 시도 (배포 환경)
+    if "credentials" in st.secrets:
+        config = {
+            "credentials": st.secrets["credentials"].to_dict(),
+            "cookie": st.secrets["cookie"].to_dict(),
+            "preauthorized": st.secrets["preauthorized"].to_dict() if "preauthorized" in st.secrets else {'emails': []}
+        }
+    
+    # 2. 로컬 파일에서 로드 시도 (개발 환경)
+    if not config:
+        try:
+            with open(APP_DIR / '../auth_config.yaml') as file:
+                config = yaml.load(file, Loader=SafeLoader)
+        except FileNotFoundError:
+            pass
+            
+    if not config:
+        st.error("인증 설정(secrets 또는 auth_config.yaml)을 찾을 수 없습니다.")
+        # 임시 데모 모드 (비상용)
+        # return 
+        
+        # 비상용 기본 설정 (배포 직후 에러 방지용, 실제로는 secrets 설정 필요)
+        st.warning("⚠️ 기본 데모 계정으로 실행됩니다. (admin / 1234)")
+        config = {
+            "credentials": {
+                "usernames": {
+                    "admin": {
+                        "email": "admin@example.com",
+                        "name": "Admin",
+                        "password": "$2b$12$qbGyuPnyvDaP1D7quPK36.bYGSFNWkqZS9wZExFpE3/Kc/IhdIefG" # 1234
+                    }
+                }
+            },
+            "cookie": {
+                "name": "drugfood_guard_cookie",
+                "key": "random_signature_key",
+                "expiry_days": 30
+            },
+            "preauthorized": {"emails": []}
+        }
 
     authenticator = stauth.Authenticate(
         config['credentials'],
@@ -1188,10 +1224,14 @@ def main():
                             # Config 업데이트
                             config['credentials']['usernames'][new_username] = new_user_info
                             
-                            with open(APP_DIR / '../auth_config.yaml', 'w') as file:
-                                yaml.dump(config, file, default_flow_style=False)
-                            
-                            st.success("회원가입 성공! 이제 로그인해주세요.")
+                            try:
+                                with open(APP_DIR / '../auth_config.yaml', 'w') as file:
+                                    yaml.dump(config, file, default_flow_style=False)
+                                st.success("회원가입 성공! 이제 로그인해주세요.")
+                            except Exception:
+                                # Cloud 환경 등 파일 쓰기가 불가능한 경우
+                                st.warning("⚠️ 클라우드 환경에서는 회원가입 정보가 영구 저장되지 않을 수 있습니다.")
+                                st.success("임시 가입 성공! (로그인 가능)")
                     else:
                         st.warning("모든 필드를 입력해주세요.")
         return
