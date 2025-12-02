@@ -272,8 +272,10 @@ def render_sidebar():
         @st.cache_data
         def load_drug_list():
             try:
-                drugs_df = pd.read_csv(APP_DIR / "../data/drugs.csv")
-                return drugs_df['drug_name'].tolist()
+                # 상호작용 정보가 있는 약물만 로드 (사용자 요청 반영)
+                interactions_df = pd.read_csv(APP_DIR / "../data/drug_food_interactions.csv")
+                # 중복 제거 및 정렬
+                return sorted(interactions_df['drug_name'].unique().tolist())
             except Exception as e:
                 st.error(f"약물 목록 로드 실패: {e}")
                 return []
