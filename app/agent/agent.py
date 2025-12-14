@@ -29,7 +29,7 @@ except ImportError:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL = "gpt-4o-mini"
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
-    GEMINI_MODEL = "gemini-1.5-flash"
+    GEMINI_MODEL = "gemini-1.5-flash-latest"
     SYSTEM_PROMPT = """당신은 DrugFood Guard의 AI 상담사입니다."""
     RISK_LEVELS = {
         "danger": {"emoji": "🔴", "label": "위험", "color": "#dc3545", "priority": 1},
