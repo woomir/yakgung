@@ -668,6 +668,9 @@ def render_landing_page():
 
         /* Hero Section */
         .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
             padding: 6rem 1rem 4rem;
             background: radial-gradient(ellipse at 50% 50%, rgba(30, 58, 95, 0.3) 0%, var(--primary) 70%);
@@ -712,9 +715,9 @@ def render_landing_page():
             color: var(--text-muted);
             max-width: 700px;
             width: 100%;
-            margin: 0 auto 3rem auto;
+            margin-bottom: 3rem !important;
             line-height: 1.6;
-            text-align: center;
+            text-align: center !important;
         }
 
         .hero-stats {
@@ -936,10 +939,10 @@ def render_landing_page():
                 안전한 복약 생활의 시작<br>
                 <span class="highlight">약식 (DrugFood Guard)</span>
             </h1>
-            <p class="hero-subtitle">
+            <div class="hero-subtitle">
                 내가 먹는 약, 이 음식과 먹어도 될까?<br>
                 약식이가 실시간으로 분석하여 당신의 건강을 지켜드립니다.
-            </p>
+            </div>
                     <div class="hero-stats">
                         <div class="stat">
                             <div class="stat-value">1,500만+</div>
