@@ -266,11 +266,7 @@ def render_sidebar():
              st.session_state.api_key = GOOGLE_API_KEY
              st.rerun()
         
-        # 마스코트 이미지 (사이드바 상단)
-        try:
-            st.image(str(APP_DIR / "static/images/mascot.png"), use_container_width=True)
-        except:
-            pass # 이미지가 없으면 패스
+
 
         # 내 약물 관리
         st.markdown("## 💊 내 약물 관리")
@@ -1331,20 +1327,29 @@ def main():
     # 마스코트 이미지 경로 설정 (HTML에서 사용하기 위해 base64로 인코딩하거나 static 폴더 서빙 필요)
     # Streamlit은 기본적으로 static 폴더를 서빙하지 않으므로, st.image를 컬럼으로 배치하는 것이 간편함.
     
-    col1, col2 = st.columns([1, 5])
-    with col1:
-        try:
-            st.image(str(APP_DIR / "static/images/mascot.png"), use_container_width=True)
-        except:
-            st.write("💊") # fallback
-            
-    with col2:
-        st.markdown("""
-            <div class="main-header-container" style="margin-bottom: 0;">
-                <div class="main-header-title">💊 약식 (DrugFood Guard)</div>
+    # 이미지 로드 (Base64)
+    img_path = APP_DIR / "static/images/mascot.png"
+    img_html = ""
+    try:
+        if img_path.exists():
+            with open(img_path, "rb") as f:
+                img_bytes = f.read()
+                encoded = base64.b64encode(img_bytes).decode()
+                # 이미지 높이를 font-size(2.5rem)와 비슷하게 맞춤
+                img_html = f'<img src="data:image/png;base64,{encoded}" style="height: 2.5rem; vertical-align: middle; margin-right: 10px;" alt="Mascot">'
+    except Exception as e:
+        pass
+
+    st.markdown(f"""
+        <div class="main-header-container" style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+            <div>
+                <div class="main-header-title" style="display: flex; align-items: center; justify-content: center;">
+                    {img_html} 💊 약식 (DrugFood Guard)
+                </div>
                 <div class="main-header-subtitle">약과 음식 상호작용을 확인하고 안전하게 복용하세요</div>
             </div>
-        """, unsafe_allow_html=True)
+        </div>
+    """, unsafe_allow_html=True)
         
     st.markdown("<br>", unsafe_allow_html=True)
     
