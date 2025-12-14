@@ -711,8 +711,10 @@ def render_landing_page():
             font-size: 1.3rem;
             color: var(--text-muted);
             max-width: 700px;
-            margin: 0 auto 3rem;
+            width: 100%;
+            margin: 0 auto 3rem auto;
             line-height: 1.6;
+            text-align: center;
         }
 
         .hero-stats {
