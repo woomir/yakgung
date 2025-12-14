@@ -687,8 +687,9 @@ def render_landing_page():
         }
 
         .hero-image {
-            max-width: 140px;
-            margin-bottom: 2rem;
+            max-width: 120px;
+            display: block;
+            margin: 0 auto 2rem auto;
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
         }
