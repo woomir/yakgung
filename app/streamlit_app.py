@@ -1335,8 +1335,8 @@ def main():
             with open(img_path, "rb") as f:
                 img_bytes = f.read()
                 encoded = base64.b64encode(img_bytes).decode()
-                # 이미지 높이를 컨테이너 높이와 비슷하게 맞춤 (약 5.5rem)
-                img_html = f'<img src="data:image/png;base64,{encoded}" style="height: 5.5rem; border-radius: 10px;" alt="Mascot">'
+                # 이미지 높이를 더 크게 키움 (약 8rem)
+                img_html = f'<img src="data:image/png;base64,{encoded}" style="height: 8rem; border-radius: 10px;" alt="Mascot">'
     except Exception as e:
         pass
 
