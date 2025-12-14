@@ -48,3 +48,4 @@ auth_config.yaml
 # Unrelated / Temporary Files
 slides.json
 drugfood_guard_slides_v2.json
+test_*.py
