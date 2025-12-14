@@ -689,13 +689,7 @@ def render_landing_page():
             margin-bottom: 2rem;
         }
 
-        .hero-image {
-            max-width: 40px;
-            display: block;
-            margin: 0 auto 2rem auto;
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
-        }
+
 
         .hero h1 {
             font-size: 4rem;
@@ -925,7 +919,7 @@ def render_landing_page():
                 with open(img_path, "rb") as f:
                     img_bytes = f.read()
                     encoded = base64.b64encode(img_bytes).decode()
-                    img_html = f'<img src="data:image/png;base64,{encoded}" class="hero-image" alt="Mascot">'
+                    img_html = f'<img src="data:image/png;base64,{encoded}" style="width: 40px; max-width: 40px; display: block; margin: 0 auto 2rem auto; border-radius: 50%; box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);" alt="Mascot">'
         except Exception as e:
             print(f"Error loading mascot: {e}")
 
