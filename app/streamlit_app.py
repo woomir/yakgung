@@ -146,9 +146,11 @@ def init_session_state():
         st.session_state.provider = "gemini"
 
     # Agent 초기화 (캐싱 사용)
+    # Agent 초기화 (캐싱 사용)
     # API 키는 세션에 저장하지 않고 직접 전달 (보안)
     from app.config import GEMINI_MODEL
-    st.session_state.agent = get_agent(st.session_state.provider, GOOGLE_API_KEY, model_name=GEMINI_MODEL)
+    # 모델명에 버전을 붙여서 캐시 무효화 강제 (v=1)
+    st.session_state.agent = get_agent(st.session_state.provider, GOOGLE_API_KEY, model_name=f"{GEMINI_MODEL}::v1")
 
     if 'messages' not in st.session_state:
         st.session_state.messages = []
@@ -521,6 +523,13 @@ def render_chat():
                         ex
                     )
                 
+                # config에서 모델명 가져오기
+                from app.config import GEMINI_MODEL
+                st.session_state.agent = get_agent(
+                    st.session_state.provider, 
+                    st.session_state.api_key,
+                    model_name=f"{GEMINI_MODEL}::v1"
+                )
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": response['response']

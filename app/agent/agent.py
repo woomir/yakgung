@@ -57,6 +57,9 @@ class DrugFoodAgent:
         if provider == "gemini":
             self.api_key = api_key or GOOGLE_API_KEY
             self.model = model or GEMINI_MODEL
+            # 캐시 무효화를 위한 접미사 제거 (예: ::v1)
+            if "::" in self.model:
+                self.model = self.model.split("::")[0]
         else:  # openai
             self.api_key = api_key or OPENAI_API_KEY
             self.model = model or OPENAI_MODEL
