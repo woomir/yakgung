@@ -1335,16 +1335,17 @@ def main():
             with open(img_path, "rb") as f:
                 img_bytes = f.read()
                 encoded = base64.b64encode(img_bytes).decode()
-                # 이미지 높이를 font-size(2.5rem)와 비슷하게 맞춤
-                img_html = f'<img src="data:image/png;base64,{encoded}" style="height: 2.5rem; vertical-align: middle; margin-right: 10px;" alt="Mascot">'
+                # 이미지 높이를 컨테이너 높이와 비슷하게 맞춤 (약 5.5rem)
+                img_html = f'<img src="data:image/png;base64,{encoded}" style="height: 5.5rem; border-radius: 10px;" alt="Mascot">'
     except Exception as e:
         pass
 
     st.markdown(f"""
-        <div class="main-header-container" style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+        <div class="main-header-container" style="display: flex; align-items: center; justify-content: center; gap: 2rem; text-align: left;">
+            {img_html}
             <div>
-                <div class="main-header-title" style="display: flex; align-items: center; justify-content: center;">
-                    {img_html} 💊 약식 (DrugFood Guard)
+                <div class="main-header-title">
+                    💊 약식 (DrugFood Guard)
                 </div>
                 <div class="main-header-subtitle">약과 음식 상호작용을 확인하고 안전하게 복용하세요</div>
             </div>
