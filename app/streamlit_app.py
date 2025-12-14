@@ -911,23 +911,13 @@ def render_landing_page():
         </style>
         """, unsafe_allow_html=True)
 
-        # 이미지 로드 (Base64)
-        img_path = APP_DIR / "static/images/mascot.png"
-        img_html = ""
-        try:
-            if img_path.exists():
-                with open(img_path, "rb") as f:
-                    img_bytes = f.read()
-                    encoded = base64.b64encode(img_bytes).decode()
-                    img_html = f'<img src="data:image/png;base64,{encoded}" style="width: 40px; max-width: 40px; display: block; margin: 0 auto 2rem auto; border-radius: 50%; box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);" alt="Mascot">'
-        except Exception as e:
-            print(f"Error loading mascot: {e}")
+
 
         # Hero Section
         st.markdown(f"""
             <div class="landing-container">
                 <div class="hero">
-                    {img_html}
+
             <div class="badge">✨ AI 기반 약물-음식 상호작용 분석</div>
             <h1>
                 안전한 복약 생활의 시작<br>
