@@ -12,6 +12,7 @@ from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 from streamlit_authenticator.utilities.hasher import Hasher
 import html
+import base64
 
 # 경로 설정
 APP_DIR = Path(__file__).parent
@@ -265,6 +266,12 @@ def render_sidebar():
              st.session_state.api_key = GOOGLE_API_KEY
              st.rerun()
         
+        # 마스코트 이미지 (사이드바 상단)
+        try:
+            st.image(str(APP_DIR / "static/images/mascot.png"), use_container_width=True)
+        except:
+            pass # 이미지가 없으면 패스
+
         # 내 약물 관리
         st.markdown("## 💊 내 약물 관리")
         
@@ -679,6 +686,13 @@ def render_landing_page():
             margin-bottom: 2rem;
         }
 
+        .hero-image {
+            max-width: 200px;
+            margin-bottom: 2rem;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
+        }
+
         .hero h1 {
             font-size: 4rem;
             font-weight: 900;
@@ -897,16 +911,32 @@ def render_landing_page():
         </style>
         """, unsafe_allow_html=True)
 
+        # 이미지 로드 (Base64)
+        img_path = APP_DIR / "static/images/mascot.png"
+        img_html = ""
+        try:
+            if img_path.exists():
+                with open(img_path, "rb") as f:
+                    img_bytes = f.read()
+                    encoded = base64.b64encode(img_bytes).decode()
+                    img_html = f'<img src="data:image/png;base64,{encoded}" class="hero-image" alt="Mascot">'
+        except Exception as e:
+            print(f"Error loading mascot: {e}")
+
         # Hero Section
-        st.markdown("""
+        st.markdown(f"""
             <div class="landing-container">
                 <div class="hero">
-                    <div class="badge">Health & Wellness RAG Agent AI</div>
-                    <h1><span class="highlight">DrugFood</span> Guard</h1>
-                    <p class="hero-subtitle">
-                        복용 중인 약물과 음식 간의 상호작용 위험을 실시간으로 분석하여<br>
-                        안전한 복약 생활을 지원하는 <strong>RAG 기반 AI Agent</strong>
-                    </p>
+                    {img_html}
+            <div class="badge">✨ AI 기반 약물-음식 상호작용 분석</div>
+            <h1>
+                안전한 복약 생활의 시작<br>
+                <span class="highlight">약식 (DrugFood Guard)</span>
+            </h1>
+            <p class="hero-subtitle">
+                내가 먹는 약, 이 음식과 먹어도 될까?<br>
+                약식이가 실시간으로 분석하여 당신의 건강을 지켜드립니다.
+            </p>
                     <div class="hero-stats">
                         <div class="stat">
                             <div class="stat-value">1,500만+</div>
@@ -1308,12 +1338,25 @@ def main():
     st.session_state.user_id = st.session_state["username"]
     # 헤더
     # 헤더 (배너 스타일)
-    st.markdown("""
-        <div class="main-header-container">
-            <div class="main-header-title">💊 약식 (DrugFood Guard)</div>
-            <div class="main-header-subtitle">약과 음식 상호작용을 확인하고 안전하게 복용하세요</div>
-        </div>
-    """, unsafe_allow_html=True)
+    # 마스코트 이미지 경로 설정 (HTML에서 사용하기 위해 base64로 인코딩하거나 static 폴더 서빙 필요)
+    # Streamlit은 기본적으로 static 폴더를 서빙하지 않으므로, st.image를 컬럼으로 배치하는 것이 간편함.
+    
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        try:
+            st.image(str(APP_DIR / "static/images/mascot.png"), use_container_width=True)
+        except:
+            st.write("💊") # fallback
+            
+    with col2:
+        st.markdown("""
+            <div class="main-header-container" style="margin-bottom: 0;">
+                <div class="main-header-title">💊 약식 (DrugFood Guard)</div>
+                <div class="main-header-subtitle">약과 음식 상호작용을 확인하고 안전하게 복용하세요</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("<br>", unsafe_allow_html=True)
     
 
     
