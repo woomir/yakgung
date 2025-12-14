@@ -133,9 +133,9 @@ st.markdown("""
 
 # ===== 세션 상태 초기화 =====
 @st.cache_resource
-def get_agent(provider, api_key):
+def get_agent(provider, api_key, model_name=None):
     """Agent 객체 생성 및 캐싱"""
-    return DrugFoodAgent(provider=provider, api_key=api_key)
+    return DrugFoodAgent(provider=provider, api_key=api_key, model=model_name)
 
 def init_session_state():
     """세션 상태 초기화"""
@@ -147,7 +147,8 @@ def init_session_state():
 
     # Agent 초기화 (캐싱 사용)
     # API 키는 세션에 저장하지 않고 직접 전달 (보안)
-    st.session_state.agent = get_agent(st.session_state.provider, GOOGLE_API_KEY)
+    from app.config import GEMINI_MODEL
+    st.session_state.agent = get_agent(st.session_state.provider, GOOGLE_API_KEY, model_name=GEMINI_MODEL)
 
     if 'messages' not in st.session_state:
         st.session_state.messages = []
@@ -260,6 +261,7 @@ def render_sidebar():
     """사이드바 렌더링"""
     with st.sidebar:
         # LLM 제공자 설정 (Hidden)
+
         # Gemini로 고정됨
         if st.session_state.provider != "gemini":
              st.session_state.provider = "gemini"
