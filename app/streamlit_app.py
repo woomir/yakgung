@@ -527,7 +527,7 @@ def render_chat():
                 from app.config import GEMINI_MODEL
                 st.session_state.agent = get_agent(
                     st.session_state.provider, 
-                    st.session_state.api_key,
+                    GOOGLE_API_KEY,
                     model_name=f"{GEMINI_MODEL}::v1"
                 )
                 st.session_state.messages.append({
