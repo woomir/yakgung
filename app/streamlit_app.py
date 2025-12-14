@@ -690,7 +690,7 @@ def render_landing_page():
         }
 
         .hero-image {
-            max-width: 120px;
+            max-width: 40px;
             display: block;
             margin: 0 auto 2rem auto;
             border-radius: 50%;
