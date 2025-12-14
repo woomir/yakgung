@@ -1,6 +1,6 @@
 """
 DrugFood Guard - Streamlit Application
-약궁 (YakGung) - 약물-음식 상호작용 확인 AI Agent
+약식 (DrugFood Guard) - 약물-음식 상호작용 확인 AI Agent
 """
 import streamlit as st
 import pandas as pd
@@ -24,7 +24,7 @@ from agent.agent import DrugFoodAgent
 
 # ===== 페이지 설정 =====
 st.set_page_config(
-    page_title="약궁 (YakGung) 💊🥗",
+    page_title="약식 (DrugFood Guard) 💊🥗",
     page_icon="💊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -179,7 +179,7 @@ def load_interaction_db():
 def render_drug_db():
     """약물 DB 뷰어 렌더링"""
     st.header("💊 약물 데이터베이스 (Drug DB)")
-    st.caption("약궁이 보유한 의약품 및 상호작용 데이터를 투명하게 공개합니다.")
+    st.caption("약식 (DrugFood Guard)이 보유한 의약품 및 상호작용 데이터를 투명하게 공개합니다.")
 
     tab1, tab2 = st.tabs(["📋 의약품 목록", "⚠️ 상호작용 규칙"])
 
@@ -535,7 +535,7 @@ def render_chat():
             else:
                 st.markdown(f"""
                 <div class="chat-message assistant-message">
-                    <strong>🤖 약궁 (YakGung)</strong><br>{msg["content"]}
+                    <strong>🤖 약식 (DrugFood Guard)</strong><br>{msg["content"]}
                 </div>
                 """, unsafe_allow_html=True)
     
@@ -927,7 +927,7 @@ def render_landing_page():
 
         col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
-            if st.button("🚀 약궁 시작하기", key="hero_start", type="primary", use_container_width=True):
+            if st.button("🚀 약식 (DrugFood Guard) 시작하기", key="hero_start", type="primary", use_container_width=True):
                 landing_container.empty() # 즉시 비우기
                 st.session_state.show_landing = False
                 st.rerun()
@@ -1310,7 +1310,7 @@ def main():
     # 헤더 (배너 스타일)
     st.markdown("""
         <div class="main-header-container">
-            <div class="main-header-title">💊 약궁 (YakGung)</div>
+            <div class="main-header-title">💊 약식 (DrugFood Guard)</div>
             <div class="main-header-subtitle">약과 음식 상호작용을 확인하고 안전하게 복용하세요</div>
         </div>
     """, unsafe_allow_html=True)

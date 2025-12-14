@@ -1,4 +1,4 @@
-# 💊 약궁 (YakGung) 🥗
+# 💊 약식 (DrugFood Guard) 🥗
 
 **약물-음식 상호작용 확인 AI Agent**
 
@@ -6,19 +6,19 @@
 
 ## ✨ 주요 기능
 
-1.  **약물 등록 & 자동 분류**: 약물명만 입력하면 AI가 성분과 카테고리(혈압약, 당뇨약 등)를 자동으로 분류하여 등록
-2.  **빠른 확인 (Intelligent Check)**: "시금치 확인해줘" 같은 자연어 문장에서 음식명만 똑똑하게 추출하여 상호작용 확인
-3.  **AI 상담**: 복잡한 약물-음식 상호작용에 대해 자연어로 질문하고 맞춤 답변 받기
-4.  **주의 음식 목록**: 등록된 약물에 따라 피해야 할 음식을 위험도별로 한눈에 보기
+1. **약물 등록 & 자동 분류**: 약물명만 입력하면 AI가 성분과 카테고리(혈압약, 당뇨약 등)를 자동으로 분류하여 등록
+2. **빠른 확인 (Intelligent Check)**: "시금치 확인해줘" 같은 자연어 문장에서 음식명만 똑똑하게 추출하여 상호작용 확인
+3. **AI 상담**: 복잡한 약물-음식 상호작용에 대해 자연어로 질문하고 맞춤 답변 받기
+4. **주의 음식 목록**: 등록된 약물에 따라 피해야 할 음식을 위험도별로 한눈에 보기
 
 ## 🛠️ 기술 스택
 
--   **Frontend**: Streamlit (Single Page Application)
--   **Backend**: Python, LangChain
--   **LLM**: Google Gemini (`gemini-2.0-flash`) - *High Performance & Cost Effective*
--   **Vector DB**: ChromaDB (Local)
--   **Database**: SQLite
--   **Deployment**: Streamlit Community Cloud
+- **Frontend**: Streamlit (Single Page Application)
+- **Backend**: Python, LangChain
+- **LLM**: Google Gemini (`gemini-2.0-flash`) - *High Performance & Cost Effective*
+- **Vector DB**: ChromaDB (Local)
+- **Database**: SQLite
+- **Deployment**: Streamlit Community Cloud
 
 ## 📁 프로젝트 구조
 
@@ -94,6 +94,7 @@ streamlit run app/streamlit_app.py
 ## 📖 사용 예시
 
 ### 시나리오 1: 혈압약 + 자몽
+
 ```
 사용자: 암로디핀 먹는데 자몽 먹어도 돼요?
 AI: 🔴 위험! 자몽은 암로디핀과 심각한 상호작용이 있습니다.
@@ -103,6 +104,7 @@ AI: 🔴 위험! 자몽은 암로디핀과 심각한 상호작용이 있습니�
 ```
 
 ### 시나리오 2: 당뇨약 + 술
+
 ```
 사용자: 메트포르민 복용 중인데 맥주 마셔도 되나요?
 AI: 🔴 위험! 알코올은 메트포르민과 함께 복용 시 
@@ -124,7 +126,7 @@ AI: 🔴 위험! 알코올은 메트포르민과 함께 복용 시
 
 ## 👨‍💻 개발팀
 
-MBA 기말 프로젝트 - YakGung Team
+MBA 기말 프로젝트 - DrugFood Guard Team
 
 ---
 

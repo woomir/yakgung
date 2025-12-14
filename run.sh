@@ -2,7 +2,7 @@
 # DrugFood Guard 실행 스크립트
 
 echo "======================================"
-echo "   약궁 (YakGung) 💊🥗"
+echo "   약식 (DrugFood Guard) 💊🥗"
 echo "   약물-음식 상호작용 AI Agent"
 echo "======================================"
 echo ""
