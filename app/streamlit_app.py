@@ -516,7 +516,7 @@ def render_chat():
     st.caption("약물-음식 상호작용에 대해 자유롭게 질문하세요.")
     
     # 예시 질문
-    with st.expander("💡 예시 질문"):
+    with st.expander("💡 예시 질문", expanded=True):
         examples = [
             "자몽 먹어도 되나요?",
             "술 마셔도 괜찮을까요?",
