@@ -414,16 +414,7 @@ def render_quick_check():
             if st.button(label, use_container_width=True):
                 selected_category = category
 
-    # 검색바 스타일 입력
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        food_input = st.text_input(
-            "음식명 입력",
-            placeholder="친구들과 먹고 싶은데 나는 치킨 먹어도 돼요?",
-            label_visibility="collapsed"
-        )
-    with col2:
-        check_button = st.button("확인", type="primary", use_container_width=True)
+
     
     # 확인 실행 (카테고리 선택 시 해당 카테고리 대표 음식 예시로 확인)
     food_to_check = None
@@ -438,8 +429,7 @@ def render_quick_check():
         }
         food_to_check = examples.get(selected_category)
         st.info(f"💡 '{selected_category}' 카테고리 예시로 '{food_to_check}'을(를) 확인합니다.")
-    elif check_button and food_input:
-        food_to_check = food_input
+
     
     if food_to_check:
         result = st.session_state.agent.check_interaction(
