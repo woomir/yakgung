@@ -127,6 +127,12 @@ st.markdown("""
             max-width: 400px;
         }
     }
+    
+    /* 탭 폰트 사이즈 키우기 */
+    button[data-baseweb="tab"] {
+        font-size: 1.2rem !important;
+        font-weight: bold !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1376,13 +1382,14 @@ def main():
         st.info("💡 [Google AI Studio](https://aistudio.google.com/apikey)에서 무료 API 키를 발급받아 .env 파일의 GOOGLE_API_KEY에 입력하세요.")
     
     # 탭 구성
-    tab1, tab2, tab3, tab4 = st.tabs(["🔍 빠른 확인", "💬 AI 상담", "⚠️ 주의 음식", "💊 약물 DB"])
+    # 탭 구성 (순서 변경: AI 상담, 빠른 확인, 주의 음식, 약물 DB)
+    tab1, tab2, tab3, tab4 = st.tabs(["� AI 상담", "� 빠른 확인", "⚠️ 주의 음식", "💊 약물 DB"])
     
     with tab1:
-        render_quick_check()
+        render_chat()
     
     with tab2:
-        render_chat()
+        render_quick_check()
     
     with tab3:
         render_warnings()
