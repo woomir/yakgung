@@ -131,11 +131,13 @@ st.markdown("""
     /* 탭 폰트 사이즈 키우기 */
     div[data-baseweb="tab-list"] button[data-baseweb="tab"] p {
         font-size: 1.2rem !important;
-        font-weight: 600 !important; /* Bold 대신 600 정도 사용 */
+        font-weight: 600 !important;
+        font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif !important;
     }
     div[data-baseweb="tab-list"] button[data-baseweb="tab"] div[data-testid="stMarkdownContainer"] p {
         font-size: 1.2rem !important;
         font-weight: 600 !important;
+        font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif !important;
     }
 </style>
 """, unsafe_allow_html=True)
