@@ -1364,7 +1364,7 @@ def main():
         pass
 
     st.markdown(f"""
-        <div class="main-header-container" style="display: flex; align-items: center; justify-content: center; gap: 2rem; text-align: left;">
+        <div class="main-header-container" style="display: flex; align-items: center; justify-content: center; gap: 2rem; text-align: center;">
             {img_html}
             <div>
                 <div class="main-header-title">
