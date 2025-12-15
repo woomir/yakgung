@@ -129,9 +129,13 @@ st.markdown("""
     }
     
     /* 탭 폰트 사이즈 키우기 */
-    button[data-baseweb="tab"] {
+    div[data-baseweb="tab-list"] button[data-baseweb="tab"] p {
         font-size: 1.2rem !important;
-        font-weight: bold !important;
+        font-weight: 600 !important; /* Bold 대신 600 정도 사용 */
+    }
+    div[data-baseweb="tab-list"] button[data-baseweb="tab"] div[data-testid="stMarkdownContainer"] p {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
     }
 </style>
 """, unsafe_allow_html=True)
