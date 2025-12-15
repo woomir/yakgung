@@ -1389,7 +1389,7 @@ def main():
     
     # 탭 구성
     # 탭 구성 (순서 변경: AI 상담, 빠른 확인, 주의 음식, 약물 DB)
-    tab1, tab2, tab3, tab4 = st.tabs(["� AI 상담", "� 빠른 확인", "⚠️ 주의 음식", "💊 약물 DB"])
+    tab1, tab2, tab3, tab4 = st.tabs(["💬 AI 상담", "🔍 빠른 확인", "⚠️ 주의 음식", "💊 약물 DB"])
     
     with tab1:
         render_chat()
